@@ -1,0 +1,29 @@
+<div class="ui form segment">
+  <h2>Twitter</h2>
+
+	<p>
+	  <div class="inline field">
+        <input id="TwitterURL" placeholder="Tweet URL plz" type="text" ng-trim="true" ng-model="Twitter.URL"/>
+		<label for="TwitterURL">Twitter URL</label>
+	  </div>
+	</p>
+	<p>
+	  <div class="inline field">
+        <input id="TwitterHeader" placeholder="Banter banner" type="text" ng-trim="true" ng-model="Twitter.Header"/>
+		<label for="TwitterURL">Header Text. This will default to 'Get Involved with #Roses2017'</label>
+	  </div>
+	 </p>
+    <p>
+		<checkbox size="large" ng-model="roses.showTweet" type="toggle">Big Tweet, Middle</checkbox>
+	</p>
+	<p>
+		<checkbox size="large" ng-model="roses.showTweetBottom" type="toggle">Normal Tweet, Bottom</checkbox>
+	</p>
+	<p>
+		<checkbox size="large" ng-model="roses.showTweetLeft" type="toggle">Normal Tweet, Lower 3rd Left</checkbox>
+	</p>
+	<p>
+		<checkbox size="large" ng-model="roses.showTweetRight" type="toggle">Normal Tweet, Lower 3rd Right</checkbox>
+	</p>
+
+</div>

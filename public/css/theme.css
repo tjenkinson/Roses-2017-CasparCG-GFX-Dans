@@ -303,6 +303,45 @@ h1, h2, h3, h4 {
 }
 
 /**************************************************/
+/*              [Twitter Embed]                     */
+/**************************************************/
+
+.twitter {
+    width: 500px;
+    text-align: center;
+    border-radius: 8px;
+    border: 0px solid rgba(0, 0, 0, 0.5);
+    background-clip: padding-box;
+}
+
+
+.twitter h1 {
+    color: #000;
+    font-size: 35px;
+    font-size: 2vw;
+    padding: 6px;
+    text-transform: uppercase;
+    background-color: #fff !important;
+}
+
+#instagram-embed-0, #twitter-widget-0, #instagram-embed-1, #twitter-widget-1, #instagram-embed-2, #twitter-widget-2, #instagram-embed-3, #twitter-widget-3 {
+	margin-top: 0px !important;
+	margin-left: 0px !important;
+	margin-right: 0px !important;
+	margin-bottom: 0px !important;
+}
+
+.twitter .twitbar {
+    display: block;
+    width: 100%;
+    font-size: 2.0vw;
+    color: #fff;
+    padding: 6px;
+    background-color: #1DA1F2;
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.12) 51%, rgba(0, 0, 0, 0.04));
+}
+
+/**************************************************/
 /*              [Football Score]                  */
 /**************************************************/
 
