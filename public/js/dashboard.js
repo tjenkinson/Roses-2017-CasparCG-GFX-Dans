@@ -43,13 +43,6 @@ app.controller('AppCtrl', ['$scope', '$location',
             icon: 'twitter',
         });
 		
-		$scope.menu.push({
-            name: 'Instagram',
-            url: '/instagram',
-            type: 'link',
-            icon: 'instagram',
-        });
-
         $scope.menu.push({
             name: 'Boxing',
             url: '/boxing',
@@ -114,10 +107,6 @@ app.config(['$routeProvider', 'localStorageServiceProvider',
 			.when("/twitter", {
                 templateUrl: '/admin/templates/twitter.tmpl.html',
                 controller: 'twitterCGController'
-            })
-			.when("/instagram", {
-                templateUrl: '/admin/templates/instagram.tmpl.html',
-                controller: 'instagramCGController'
             })
             .when("/football", {
                 templateUrl: '/admin/templates/football.tmpl.html',
