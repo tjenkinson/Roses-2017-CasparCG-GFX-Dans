@@ -115,6 +115,52 @@ app.controller('scoringCtrl', ['$scope', '$interval', '$http', 'socket',
     }
 ]);
 
+app.controller('twitterCtrl', ['$scope', '$interval', '$http', 'socket',
+    function($scope, $interval, $http, socket){
+        $scope.tickInterval = 5000;
+        $scope.tweetHTML = "";
+
+        var fetchScore = function () {
+            $http.get('https://publish.twitter.com/oembed?url=https://twitter.com/Interior/status/463440424141459456')
+                .success(function(data) {
+                    $scope.tweetHTML = data.html;
+                }
+            );
+        };
+
+        socket.on("score", function (state) {
+            $scope.showTweet = state.showTweet;
+        });
+		
+		socket.on("score", function (state) {
+            $scope.showTweetBottom = state.showTweetBottom;
+        });
+		
+		socket.on("score", function (state) {
+            $scope.showTweetLeft = state.showTweetLeft;
+        });
+		
+		socket.on("score", function (state) {
+            $scope.showTweetRight = state.showTweetRight;
+        });
+
+        $scope.$watch('score', function() {
+            if (!$scope.score) {
+                getScoreData();
+            }
+        }, true);
+
+        function getScoreData() {
+            socket.emit("score:get");
+        }
+
+        //Intial fetch
+        fetchScore();
+        // Start the timer
+        $interval(fetchScore, $scope.tickInterval);
+    }
+]);
+
 app.controller('footballCtrl', ['$scope', 'socket',
     function($scope, socket){
 

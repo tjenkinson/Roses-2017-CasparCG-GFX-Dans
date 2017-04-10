@@ -35,6 +35,20 @@ app.controller('AppCtrl', ['$scope', '$location',
             type: 'link',
             icon: 'trophy',
         });
+		
+		$scope.menu.push({
+            name: 'Twitter',
+            url: '/twitter',
+            type: 'link',
+            icon: 'twitter',
+        });
+		
+		$scope.menu.push({
+            name: 'Instagram',
+            url: '/instagram',
+            type: 'link',
+            icon: 'instagram',
+        });
 
         $scope.menu.push({
             name: 'Boxing',
@@ -96,6 +110,14 @@ app.config(['$routeProvider', 'localStorageServiceProvider',
             .when("/roses", {
                 templateUrl: '/admin/templates/roses.tmpl.html',
                 controller: 'rosesCGController'
+            })
+			.when("/twitter", {
+                templateUrl: '/admin/templates/twitter.tmpl.html',
+                controller: 'twitterCGController'
+            })
+			.when("/instagram", {
+                templateUrl: '/admin/templates/instagram.tmpl.html',
+                controller: 'instagramCGController'
             })
             .when("/football", {
                 templateUrl: '/admin/templates/football.tmpl.html',
@@ -268,6 +290,26 @@ app.controller('boxingCGController', ['$scope', 'socket',
 
 
 app.controller('rosesCGController', ['$scope', 'socket',
+    function($scope, socket){
+        socket.on("score", function (msg) {
+            $scope.roses = msg;
+        });
+
+        $scope.$watch('roses', function() {
+            if ($scope.roses) {
+                socket.emit("score", $scope.roses);
+            } else {
+                getScoreData();
+            }
+        }, true);
+
+        function getScoreData() {
+            socket.emit("score:get");
+        }
+    }
+]);
+
+app.controller('twitterCGController', ['$scope', 'socket',
     function($scope, socket){
         socket.on("score", function (msg) {
             $scope.roses = msg;
