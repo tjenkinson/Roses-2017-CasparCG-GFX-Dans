@@ -382,6 +382,15 @@ app.controller('twitterCGController', ['$scope', 'socket',
         socket.on("score", function (msg) {
             $scope.roses = msg;
         });
+        
+        $scope.Pos = [
+        {pos:'middle center'},
+        {pos:'bottom center'},
+        {pos:'bottom left'},
+        {pos:'bottom right'}
+        ];
+        
+        $scope.currPos = $scope.Pos[3];
 
         $scope.$watch('roses', function() {
             if ($scope.roses) {
