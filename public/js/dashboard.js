@@ -40,7 +40,7 @@ app.controller('AppCtrl', ['$scope', '$location',
             name: 'Twitter',
             url: '/twitter',
             type: 'link',
-            icon: 'twitter',
+            icon: 'blue twitter',
         });
 		
         $scope.menu.push({
