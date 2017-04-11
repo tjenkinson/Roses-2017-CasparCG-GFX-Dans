@@ -27,6 +27,14 @@ app.controller('lowerThirdsCtrl', ['$scope', 'socket',
     }
 ]);
 
+app.controller('archeryCtrl', ['$scope', 'socket',
+    function($scope, socket){
+        socket.on("archery", function (msg) {
+            $scope.archery = msg;
+        });
+    }
+]);
+
 app.controller('boxingCtrl', ['$scope', 'socket',
     function($scope, socket){
 
@@ -86,12 +94,18 @@ app.controller('scoringCtrl', ['$scope', '$interval', '$http', 'socket',
         $scope.lancScore = "";
 
         var fetchScore = function () {
-            $http.get('http://roseslive.co.uk/score.json')
-                .success(function(data) {
-                    $scope.yorkScore = data.york;
-                    $scope.lancScore = data.lancs;
-                }
-            );
+          var config = {headers:  {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            }
+          };
+
+          $http.get('https://roseslive.co.uk/score.json', config)
+            .success(function(data) {
+                $scope.yorkScore = data.york;
+                $scope.lancScore = data.lancs;
+            }
+          );
         };
 
         socket.on("score", function (state) {
