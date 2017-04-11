@@ -13,6 +13,17 @@
 		<label for="TwitterURL">Header Text. This will default to 'Get Involved with #Roses2017'</label>
 	  </div>
 	 </p>
+	 
+	 
+	 <div class="inline field">
+      <label>Tweet Location</label>
+      <dropdown title="Tweet Location" ng-model="tweet.currPos" on-change="posChanged()">
+        <dropdown-group>Middle Center</dropdown-group>
+        <dropdown-group>Bottom Center</dropdown-group>
+        <dropdown-group>Bottom Left</dropdown-group>
+        <dropdown-group>Bottom Right</dropdown-group>
+      </dropdown>
+      </div>
     <p>
 		<checkbox size="large" ng-model="roses.showTweet" type="toggle">Big Tweet, Middle</checkbox>
 	</p>
