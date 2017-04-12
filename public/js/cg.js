@@ -195,6 +195,9 @@ app.controller('socialmediaCtrl', ['$scope', '$http', 'socket',
           $http.jsonp('https://api.twitter.com/1/statuses/oembed.json?url=https://twitter.com/yorkunisu/status/852167007055302657&callback=JSON_CALLBACK', config)
             .success(function(data) {
                 $scope.tweetHTML = data.html;
+                $scope.tweetAuthor = data.author_name;
+                $scope.tweetType = data.type;
+                $scope.tweetHTML = scope.tweetHTML.replace(/^"(.*)"$/, '$1');
              }
           );
         };
