@@ -425,18 +425,14 @@ h1, h2, h3, h4 {
 
 .social-media {
   width: 500px;
-<<<<<<< HEAD
   background-color: rgba(255, 255, 255, 0.0);
   font-size: 0.0vw;
-
   border-radius: 5px;
   background-clip: padding-box;
-=======
 }
 
 .social-media twitterwidget::shadow .Tweet-brand, .social-media twitterwidget::shadow .Tweet-actions {
   display: none;
->>>>>>> origin/dan-testing
 }
 
 /**************************************************/
