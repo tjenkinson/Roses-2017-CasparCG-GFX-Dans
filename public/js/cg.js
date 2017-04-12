@@ -197,7 +197,7 @@ app.controller('socialmediaCtrl', ['$scope', '$http', 'socket',
                 $scope.tweetHTML = data.html;
                 $scope.tweetAuthor = data.author_name;
                 $scope.tweetType = data.type;
-                $scope.tweetHTML = scope.tweetHTML.replace(/^"(.*)"$/, '$1');
+                
              }
           );
         };
