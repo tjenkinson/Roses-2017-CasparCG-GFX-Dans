@@ -201,12 +201,12 @@ app.controller('socialmediaCtrl', ['$scope', '$http', 'socket', '$sce',
             }
           };
           
-          if (tweetUrl.includes("instagram")) { oEmbedUrl = 'http://api.instagram.com/oembed?url='; }
-          else if (tweetUrl.includes("facebook")) { oEmbedUrl = 'https://www.facebook.com/plugins/post/oembed.json/?url='; }
+          if (tweetUrl.includes("instagram.com")) { oEmbedUrl = 'http://api.instagram.com/oembed?url='; }
+          else if (tweetUrl.includes("facebook.com")) { oEmbedUrl = 'https://www.facebook.com/plugins/post/oembed.json/?url='; }
           else { oEmbedUrl = 'https://api.twitter.com/1/statuses/oembed.json?url=';
           }
 
-          $http.jsonp(oEmbedUrl+tweetUrl+'&maxwidth=550&callback=JSON_CALLBACK', config)
+          $http.jsonp(oEmbedUrl+tweetUrl+'&callback=JSON_CALLBACK', config)
             .success(function(data) {
                 $scope.tweetHTML = $sce.trustAsHtml(data.html);
                 $scope.tweetAuthor = data.author_name;

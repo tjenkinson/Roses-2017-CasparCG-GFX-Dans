@@ -3,7 +3,7 @@
 
     <div class="ui grid center aligned">
         <div class="4 wide column">
-            <div class="field"><checkbox ng-model="socialmedia.show" size="large" type="toggle">Show Tweet</checkbox></div>
+            <div class="field"><checkbox ng-model="socialmedia.show" size="large" type="toggle">Show Post</checkbox></div>
         </div>
     </div>
 
@@ -40,15 +40,12 @@
  <div class="ui divider"></div>
 
     <br>
-    <div class="ui grid">    
+    <div class="ui grid">
+    <div class="four wide column center"> </div>  
 	<div class="eight wide column center">
         <div id=tweet_details></div>
-		
-	</div>	
-	<div class="eight wide column center">
-        <div id=insta_details></div>
-		
 	</div>
+	<div class="four wide column center"> </div>  	
 	</div>
 			
 		<script>
@@ -57,8 +54,8 @@
 			  $("#resolve-tweet").click(function() {
 				var url = $("#socialurl").val();
 				
-				if (url.includes("instagram")) { oEmbedUrl = 'http://api.instagram.com/oembed?url='; }
-				else if (url.includes("facebook")) { oEmbedUrl = 'https://www.facebook.com/plugins/post/oembed.json/?url='; }
+				if (url.includes("instagram.com")) { oEmbedUrl = 'http://api.instagram.com/oembed?url='; }
+				else if (url.includes("facebook.com")) { oEmbedUrl = 'https://www.facebook.com/plugins/post/oembed.json/?url='; }
           		else { oEmbedUrl = 'https://api.twitter.com/1/statuses/oembed.json?url=';
           		}
 				
