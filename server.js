@@ -142,7 +142,7 @@ io.on('connection', function(socket) {
 	 * 		Social Media
 	 */
 	socket.on("socialmedia", function(msg) {
-        dart = msg;
+        socialmedia = msg;
 		io.sockets.emit("socialmedia", msg);
 	});
 
