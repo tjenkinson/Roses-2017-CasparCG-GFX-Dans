@@ -1,0 +1,99 @@
+<div class="ui form segment">
+  <h2>Social Media</h2>
+
+    <div class="ui grid center aligned">
+        <div class="4 wide column">
+            <div class="field"><checkbox ng-model="socialmedia.show" size="large" type="toggle">Show Tweet</checkbox></div>
+        </div>
+    </div>
+
+    <div class="ui divider"></div>
+
+    <br>
+   <div class="ui grid">
+
+        <div class="sizteen wide column">
+		
+			<div class="fields">
+
+                <div class="eight wide field">
+					<input id=socialurl type="text" placeholder="Tweet URL" ng-model="socialmedia.tweet">
+				</div>
+		
+
+				<div class="four wide field">
+						 <dropdown title="Tweet Location"  ng-model="socialmedia.pos">
+							<dropdown-group>bottom left</dropdown-group>
+							<dropdown-group>bottom right</dropdown-group>
+							<dropdown-group>bottom center</dropdown-group>
+							<dropdown-group>middle center</dropdown-group>
+						  </dropdown>
+				</div>
+			
+				<div class="two wide field right">
+						<button id=resolve-tweet class="ui blue button">Preview Tweet</button>
+				</div>
+				<div class="two wide field right">
+						<button id=resolve-insta class="ui blue button">Preview Insta</button>
+				</div>
+			</div>
+		</div>
+</div>	
+<br>
+ <div class="ui divider"></div>
+
+    <br>
+    <div class="ui grid">    
+	<div class="eight wide column center">
+        <div id=tweet_details></div>
+		
+	</div>	
+	<div class="eight wide column center">
+        <div id=insta_details></div>
+		
+	</div>
+	</div>
+			
+		<script>
+		
+			$(document).ready(function() {
+			  $("#resolve-tweet").click(function() {
+				var url = $("#socialurl").val();
+				if (url == "") {
+				  $(".controls").addClass("error");
+				} else {
+				  $("#tweet_div").show();
+				  $.ajax({
+					url: "https://api.twitter.com/1/statuses/oembed.json?url=" + url,
+					dataType: "jsonp",
+					success: function(data) {
+					  $('#tweet_details').html(data.html);
+					}
+				  });
+				}
+			  })
+			})
+	  </script>
+	  <script>
+		
+			$(document).ready(function() {
+			  $("#resolve-insta").click(function() {
+				var url = $("#socialurl").val();
+				if (url == "") {
+				  $(".controls").addClass("error");
+				} else {
+				  $("#tweet_div").show();
+				  $.ajax({
+					url: "https://api.instagram.com/oembed/?url=" + url,
+					dataType: "jsonp",
+					success: function(data) {
+					  $('#insta_details').html(data.html);
+					}
+				  });
+				}
+			  })
+			})
+	  </script>
+	  
+
+   

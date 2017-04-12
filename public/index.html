@@ -87,18 +87,8 @@
                 <div class="clearfix"></div>
             </div>
         </div>
-		
-	    <div ng-controller="twitterCtrl">
-            <div ng-show="showTweet" class="{{currPos}} twitter scale-fade" >
-                {{tweetHTML}}
-				<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">We’re proud to be backing <a href="https://twitter.com/YorkSportUnion">@YorkSportUnion</a> in <a href="https://twitter.com/hashtag/Roses2017?src=hash">#Roses2017</a>! <a href="https://twitter.com/UoYAccomm">@UoYAccomm</a></p>&mdash; UoY Accommodation (@UoYAccomm) <a href="https://twitter.com/UoYAccomm/status/851362870713618433">April 10, 2017</a></blockquote>
-					<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
-			      <div class="clearfix"></div>
-            </div>
-   					
-        </div>
-		
-		<div ng-controller="footballCtrl" class="football left top scale-fade" ng-show="football.show">
+
+        <div ng-controller="footballCtrl" class="football left top scale-fade" ng-show="football.show">
             <div class="row">
                 <div class="clock">{{clock}}</div>
                 <div class="score lanc">LANCS {{football.lancScore}}</div>
@@ -116,7 +106,7 @@
 
         <div ng-controller="dartsCtrl" class="right bottom darts scale-fade" ng-show="darts.show">
             <div class="row header">
-                <div class="name">&nbsp;</div>
+                <div class="name">{{darts.match}}&nbsp;</div>
                 <div class="set">SETS</div>
                 <div class="leg">LEGS</div>
                 <div class="name2">&nbsp;</div>
@@ -139,6 +129,12 @@
             <div class="row">
                  <div class="footer">first to 3 legs wins set</div>
             </div>
+        </div>
+        
+                <div ng-controller="socialmediaCtrl" class="{{socialmedia.pos}} social-media scale-fade" ng-show="socialmedia.show">
+
+                <div class="element">{{socialmedia.tweet}}</div>
+
         </div>
 
         <div ng-controller="archeryCtrl" class="left bottom darts scale-fade" ng-show="archery.show" style="width: 50%">

@@ -35,14 +35,7 @@ app.controller('AppCtrl', ['$scope', '$location',
             type: 'link',
             icon: 'yellow trophy',
         });
-		
-		$scope.menu.push({
-            name: 'Twitter',
-            url: '/twitter',
-            type: 'link',
-            icon: 'blue twitter',
-        });
-		
+
         $scope.menu.push({
             name: 'Boxing',
             url: '/boxing',
@@ -62,6 +55,13 @@ app.controller('AppCtrl', ['$scope', '$location',
             url: '/darts',
             type: 'link',
             icon: 'red bullseye',
+        });
+        
+        $scope.menu.push({
+            name: 'Social Media',
+            url: '/social-media',
+            type: 'link',
+            icon: 'blue twitter',
         });
 
         $scope.menu.push({
@@ -111,10 +111,6 @@ app.config(['$routeProvider', 'localStorageServiceProvider',
                 templateUrl: '/admin/templates/roses.tmpl.html',
                 controller: 'rosesCGController'
             })
-			.when("/twitter", {
-                templateUrl: '/admin/templates/twitter.tmpl.html',
-                controller: 'twitterCGController'
-            })
             .when("/football", {
                 templateUrl: '/admin/templates/football.tmpl.html',
                 controller: 'footballCGController'
@@ -122,6 +118,10 @@ app.config(['$routeProvider', 'localStorageServiceProvider',
             .when("/darts", {
                 templateUrl: '/admin/templates/darts.tmpl.html',
                 controller: 'dartsCGController'
+            })
+            .when("/social-media", {
+                templateUrl: '/admin/templates/social-media.tmpl.html',
+                controller: 'socialmediaCGController'
             })
             .when("/swimming", {
                 templateUrl: '/admin/templates/swimming.tmpl.html',
@@ -377,35 +377,6 @@ app.controller('rosesCGController', ['$scope', 'socket',
     }
 ]);
 
-app.controller('twitterCGController', ['$scope', 'socket',
-    function($scope, socket){
-        socket.on("score", function (msg) {
-            $scope.roses = msg;
-        });
-        
-        $scope.Pos = [
-        {pos:'middle center'},
-        {pos:'bottom center'},
-        {pos:'bottom left'},
-        {pos:'bottom right'}
-        ];
-        
-        $scope.currPos = $scope.Pos[3];
-
-        $scope.$watch('roses', function() {
-            if ($scope.roses) {
-                socket.emit("score", $scope.roses);
-            } else {
-                getScoreData();
-            }
-        }, true);
-
-        function getScoreData() {
-            socket.emit("score:get");
-        }
-    }
-]);
-
 
 app.controller('footballCGController', ['$scope', 'localStorageService', 'socket',
     function($scope, localStorageService, socket){
@@ -550,6 +521,27 @@ app.controller('dartsCGController', ['$scope', 'socket',
     }
 ]);
 
+app.controller('socialmediaCGController', ['$scope', 'socket',
+    function($scope, socket) {
+        socket.on("socialmedia", function (msg) {
+            $scope.socialmedia = msg;
+        });
+
+        $scope.$watch('socialmedia', function() {
+            if ($scope.socialmedia) {
+                socket.emit("socialmedia", $scope.socialmedia);
+            } else {
+                getSocialMediaData();
+            }
+        }, true);
+
+        function getSocialMediaData() {
+            socket.emit("socialmedia:get");
+        }
+
+    }
+]);
+
 app.controller('swimmingCGController', ['$scope', 'socket',
     function($scope, socket) {
         socket.on("clock:tick", function (msg) {
@@ -577,10 +569,11 @@ app.controller('swimmingCGController', ['$scope', 'socket',
         };
 
         $scope.resetOrder = function(val) {
+                var splits = $scope.swimming.showsplits;
                 $scope.swimming.showsplits = false;
                 setTimeout(function() {
                     $scope.swimming.order = '';
-                    $scope.swimming.showsplits = true;
+                    $scope.swimming.showsplits = splits;
                     socket.emit("swimming", $scope.swimming);
                 }, 600);
         };

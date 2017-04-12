@@ -303,45 +303,6 @@ h1, h2, h3, h4 {
 }
 
 /**************************************************/
-/*              [Twitter Embed]                     */
-/**************************************************/
-
-.twitter {
-    width: 500px;
-    text-align: center;
-    border-radius: 8px;
-    border: 0px solid rgba(0, 0, 0, 0.5);
-    background-clip: padding-box;
-}
-
-
-.twitter h1 {
-    color: #000;
-    font-size: 35px;
-    font-size: 2vw;
-    padding: 6px;
-    text-transform: uppercase;
-    background-color: #fff !important;
-}
-
-#instagram-embed-0, #twitter-widget-0, #instagram-embed-1, #twitter-widget-1, #instagram-embed-2, #twitter-widget-2, #instagram-embed-3, #twitter-widget-3 {
-	margin-top: 0px !important;
-	margin-left: 0px !important;
-	margin-right: 0px !important;
-	margin-bottom: 0px !important;
-}
-
-.twitter .twitbar {
-    display: block;
-    width: 100%;
-    font-size: 2.0vw;
-    color: #fff;
-    padding: 6px;
-    background-color: #1DA1F2;
-    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.12) 51%, rgba(0, 0, 0, 0.04));
-}
-
-/**************************************************/
 /*              [Football Score]                  */
 /**************************************************/
 
@@ -389,7 +350,7 @@ h1, h2, h3, h4 {
 /**************************************************/
 
 .darts {
-  width: 30%;
+  width: 35%;
   background-color: rgba(0, 0, 0, 0.5);
   text-align: center;
   font-size: 25px;
@@ -407,15 +368,15 @@ h1, h2, h3, h4 {
 
 .darts .name, .darts .legs, .darts .score, .darts .leg, .darts .footer, .darts .set, .darts .sets {
   float: left;
-  line-height: 45px;
-  line-height: 3.2vw;
+  line-height: 40px;
+  line-height: 2.9vw;
 
   padding-left: 5px;
   padding-right: 5px;
 }
 
 .darts .name {
-  width: 50%;
+  width: 57%;
 }
 
 .darts .name.lanc {
@@ -431,7 +392,7 @@ h1, h2, h3, h4 {
 }
 
 .darts .legs {
-  width: 15%;
+  width: 13%;
   color: #fff;
   background-color: #00d;
   background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.12) 51%, rgba(0, 0, 0, 0.04));
@@ -439,7 +400,7 @@ h1, h2, h3, h4 {
 }
 
 .darts .sets {
-  width: 15%;
+  width: 13%;
   color: #fff;
   background-color: #00d;
   background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.12) 51%, rgba(0, 0, 0, 0.04));
@@ -447,12 +408,36 @@ h1, h2, h3, h4 {
 }
 
 .darts .score {
-  width: 20%;
+  width: 17%;
   color: #fff;
   background-color: #00d;
   background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.12) 51%, rgba(0, 0, 0, 0.04));
   border-left: 2px solid #fff;
 }
+
+.darts .footer {
+  text-align: left;
+}
+
+/**************************************************/
+/*              [Social Media]                    */
+/**************************************************/
+
+.social-media {
+  width: 500px;
+  background-color: rgba(0, 0, 0, 0.5);
+  font-size: 1.0vw;
+
+  border-radius: 5px;
+  border: 0px solid rgba(0, 0, 0, 0.5);
+  background-clip: padding-box;
+}
+
+
+
+/**************************************************/
+/*              [Archery]                         */
+/**************************************************/
 
 .archery-score {
   color: #fff;
@@ -476,14 +461,14 @@ h1, h2, h3, h4 {
 .darts .header .name {
   background-color: #fff;
   color: #000;
-  width: 50%%;
+  width: 57%%;
   line-height: 30px;
   line-height: 2.5vw;
 }
 .darts .header .name2 {
   background-color: #fff;
   color: #000;
-  width: 20%%;
+  width: 17%%;
   line-height: 30px;
   line-height: 2.5vw;
 }
@@ -491,7 +476,7 @@ h1, h2, h3, h4 {
 .darts .header .leg {
   color: #000;
   background-color: #fff;
-  width: 15%;
+  width: 13%;
   font-size: 20px;
   font-size: 1.3vw;
   line-height: 30px;
@@ -500,7 +485,7 @@ h1, h2, h3, h4 {
 .darts .header .set {
   color: #000;
   background-color: #fff;
-  width: 15%;
+  width: 13%;
   font-size: 20px;
   font-size: 1.3vw;
   line-height: 30px;
