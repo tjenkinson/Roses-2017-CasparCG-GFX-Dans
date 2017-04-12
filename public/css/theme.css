@@ -425,12 +425,10 @@ h1, h2, h3, h4 {
 
 .social-media {
   width: 500px;
-  background-color: rgba(0, 0, 0, 0.5);
-  font-size: 1.0vw;
+}
 
-  border-radius: 5px;
-  border: 0px solid rgba(0, 0, 0, 0.5);
-  background-clip: padding-box;
+.social-media twitterwidget::shadow .Tweet-brand, .social-media twitterwidget::shadow .Tweet-actions {
+  display: none;
 }
 
 /**************************************************/
