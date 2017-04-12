@@ -431,6 +431,16 @@ h1, h2, h3, h4 {
   background-clip: padding-box;
 }
 
+.social-media .big-center iframe {
+	-webkit-transform:scale(1.0);
+	-moz-transform-scale(1.0); 
+	position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    
+}
+
 .social-media twitterwidget::shadow .Tweet-brand, .social-media twitterwidget::shadow .Tweet-actions {
   display: none;
 }

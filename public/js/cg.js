@@ -201,7 +201,7 @@ app.controller('socialmediaCtrl', ['$scope', '$http', 'socket', '$sce',
             }
           };
 
-          $http.jsonp('https://api.twitter.com/1/statuses/oembed.json?url='+tweetUrl+'&callback=JSON_CALLBACK', config)
+          $http.jsonp('https://api.twitter.com/1/statuses/oembed.json?url='+tweetUrl+'&maxwidth=550&callback=JSON_CALLBACK', config)
             .success(function(data) {
                 $scope.tweetHTML = $sce.trustAsHtml(data.html);
                 $scope.tweetAuthor = data.author_name;
