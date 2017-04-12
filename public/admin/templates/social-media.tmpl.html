@@ -30,11 +30,8 @@
 						  </dropdown>
 				</div>
 			
-				<div class="two wide field right">
-						<button id=resolve-tweet class="ui blue button">Preview Tweet</button>
-				</div>
-				<div class="two wide field right">
-						<button id=resolve-insta class="ui blue button">Preview Insta</button>
+				<div class="four wide field right">
+						<button id=resolve-tweet class="ui blue button">Preview </button>
 				</div>
 			</div>
 		</div>
@@ -59,12 +56,18 @@
 			$(document).ready(function() {
 			  $("#resolve-tweet").click(function() {
 				var url = $("#socialurl").val();
+				
+				if (url.includes("instagram")) { oEmbedUrl = 'http://api.instagram.com/oembed?url='; }
+				else if (url.includes("facebook")) { oEmbedUrl = 'https://www.facebook.com/plugins/post/oembed.json/?url='; }
+          		else { oEmbedUrl = 'https://api.twitter.com/1/statuses/oembed.json?url=';
+          		}
+				
 				if (url == "") {
 				  $(".controls").addClass("error");
 				} else {
 				  $("#tweet_div").show();
 				  $.ajax({
-					url: "https://api.twitter.com/1/statuses/oembed.json?url=" + url,
+					url: oEmbedUrl + url,
 					dataType: "jsonp",
 					success: function(data) {
 					  $('#tweet_details').html(data.html);
@@ -74,26 +77,6 @@
 			  })
 			})
 	  </script>
-	  <script>
-		
-			$(document).ready(function() {
-			  $("#resolve-insta").click(function() {
-				var url = $("#socialurl").val();
-				if (url == "") {
-				  $(".controls").addClass("error");
-				} else {
-				  $("#tweet_div").show();
-				  $.ajax({
-					url: "https://api.instagram.com/oembed/?url=" + url,
-					dataType: "jsonp",
-					success: function(data) {
-					  $('#insta_details').html(data.html);
-					}
-				  });
-				}
-			  })
-			})
-	  </script>
-	  
+
 
    
