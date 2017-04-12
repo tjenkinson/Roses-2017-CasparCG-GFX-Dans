@@ -171,32 +171,37 @@ app.controller('dartsCtrl', ['$scope', 'socket',
     }
 ]);
 
-app.controller('socialmediaCtrl', ['$scope', '$http', 'socket',
-    function($scope, $http, socket){
+app.controller('socialmediaCtrl', ['$scope', '$http', 'socket', '$sce',
+    function($scope, $http, socket, $sce){
         socket.on("socialmedia", function (msg) {
+            tweetUrl = msg.tweet;
             $scope.socialmedia = msg;
+            fetchTweetHTML(msg.tweet);
         });
 
 		$scope.twitterurl = 'https://api.twitter.com/1/statuses/oembed.json?url=';
 		$scope.instaurl = 'http://api.instagram.com/oembed?url=';
 		$scope.tweethtml = '';
 		
-		if ($scope.socialmedia) { $scope.tweetfetchurl = $scope.twitterurl + $scope.tweet;
-				} else { $scope.tweetfetchurl = $scope.twitterurl + $scope.tweet;
-				}
+		if ($scope.socialmedia) {
+            $scope.tweetfetchurl = $scope.twitterurl + $scope.tweet;
+		} else {
+            $scope.tweetfetchurl = $scope.twitterurl + $scope.tweet;
+		}
 		
-		var fetchTweetHTML = function () {
+		var fetchTweetHTML = function (tweetUrl) {
           var config = {headers:  {
               'Accept': 'application/jsonp',
               'Content-Type': 'application/jsonp',
             }
           };
 
-          $http.jsonp('https://api.twitter.com/1/statuses/oembed.json?url=https://twitter.com/yorkunisu/status/852167007055302657&callback=JSON_CALLBACK', config)
+          $http.jsonp('https://api.twitter.com/1/statuses/oembed.json?url='+tweetUrl+'&callback=JSON_CALLBACK', config)
             .success(function(data) {
-                $scope.tweetHTML = data.html;
+                $scope.tweetHTML = $sce.trustAsHtml(data.html);
                 $scope.tweetAuthor = data.author_name;
                 $scope.tweetType = data.type;
+                
              }
           );
         };
@@ -210,8 +215,6 @@ app.controller('socialmediaCtrl', ['$scope', '$http', 'socket',
         function getSocialMediaData() {
             socket.emit("socialmedia:get");
         }
-        
-        fetchTweetHTML();
     }
 
 ]);
