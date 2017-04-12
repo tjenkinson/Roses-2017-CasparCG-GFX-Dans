@@ -173,9 +173,14 @@ app.controller('dartsCtrl', ['$scope', 'socket',
 
 app.controller('socialmediaCtrl', ['$scope', '$http', 'socket', '$sce',
     function($scope, $http, socket, $sce){
+        var showTweet = false;
         socket.on("socialmedia", function (msg) {
             tweetUrl = msg.tweet;
             $scope.socialmedia = msg;
+            showTweet = msg.show;
+            if (!showTweet) {
+                $scope.showTweet = false;
+            }
             fetchTweetHTML(msg.tweet);
         });
 
@@ -201,7 +206,12 @@ app.controller('socialmediaCtrl', ['$scope', '$http', 'socket', '$sce',
                 $scope.tweetHTML = $sce.trustAsHtml(data.html);
                 $scope.tweetAuthor = data.author_name;
                 $scope.tweetType = data.type;
-                
+                setTimeout(function() {
+                    twttr.widgets.load();
+                    if (showTweet) {
+                        $scope.showTweet = showTweet;
+                    }
+                });
              }
           );
         };
