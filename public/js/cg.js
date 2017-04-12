@@ -184,16 +184,6 @@ app.controller('socialmediaCtrl', ['$scope', '$http', 'socket', '$sce',
             fetchTweetHTML(msg.tweet);
         });
 
-		$scope.twitterurl = 'https://api.twitter.com/1/statuses/oembed.json?url=';
-		$scope.instaurl = 'http://api.instagram.com/oembed?url=';
-		$scope.tweethtml = '';
-		
-		if ($scope.socialmedia) {
-            $scope.tweetfetchurl = $scope.twitterurl + $scope.tweet;
-		} else {
-            $scope.tweetfetchurl = $scope.twitterurl + $scope.tweet;
-		}
-		
 		var fetchTweetHTML = function (tweetUrl) {
           var config = {headers:  {
               'Accept': 'application/jsonp',
