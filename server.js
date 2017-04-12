@@ -12,7 +12,10 @@ var score = {};
 var football = {lancScore: 0, yorkScore: 0};
 var basketball = {lancScore: 0, yorkScore: 0};
 var dart = {match: "Darts", player1: "Lancaster", player2: "York", set1: 0, set2:0, leg1: 0, leg2: 0, score1:501, score2:501 };
+<<<<<<< HEAD
 var socialmedia = {tweet: '', pos: "bottom left"};
+=======
+>>>>>>> LA1TV/master
 var swimming = {order: ''};
 var grid = {};
 var archery = {};
