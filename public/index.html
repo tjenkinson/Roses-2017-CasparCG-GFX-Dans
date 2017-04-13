@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>CG</title>
-        <link rel="stylesheet" href="http://meyerweb.com/eric/tools/css/reset/reset.css" />
+        <link rel="stylesheet" href="http://meyerweb.com/eric/tools/css/reset/resets.css" />
         <link href="http://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
         <link href="/css/theme.css" rel="stylesheet" type="text/css">
         <link href="/css/animation.css" rel="stylesheet" type="text/css">
@@ -131,7 +131,7 @@
             </div>
         </div>
         
-                <div ng-controller="socialmediaCtrl" class="{{socialmedia.pos}} social-media scale-fade" ng-show="socialmedia.show">
+                <div ng-controller="socialmediaCtrl" class="{{socialmedia.pos}} social-media scale-fade" ng-show="showTweet">
                 <div ng-bind-html="tweetHTML"></div>
 
         </div>
