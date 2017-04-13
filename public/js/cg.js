@@ -203,6 +203,8 @@ app.controller('socialmediaCtrl', ['$scope', '$http', 'socket', '$sce',
                 $scope.tweetType = data.type;
                 setTimeout(function() {
                     twttr.widgets.load();
+		    FB.XFBML.parse();
+	            instgrm.Embeds.process();
                     if (showTweet) {
                         $scope.showTweet = showTweet;
                     }
