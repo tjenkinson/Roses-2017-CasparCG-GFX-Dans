@@ -1,4 +1,4 @@
-# Roses CG Graphic
+# Roses Live Sports News Graphics 
 
 ## Launching Graphics
 
