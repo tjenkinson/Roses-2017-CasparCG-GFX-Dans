@@ -77,6 +77,18 @@ io.on('connection', function(socket) {
 		io.sockets.emit("bottomLeft", bug);
 	});
 	
+	/*
+	* 		Bottom Right Fixtures
+	*/
+	socket.on("bottomRight", function(msg) {
+        bottomRight = msg;
+		io.sockets.emit("bottomRight", msg);
+	});
+
+    socket.on("bottomRight:get", function(msg) {
+		io.sockets.emit("bottomRight", bottomRight);
+	});
+	
 });
 	
 

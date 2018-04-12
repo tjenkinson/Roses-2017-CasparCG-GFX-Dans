@@ -27,10 +27,21 @@
                 </div>
             </div>
         </div>
-        
-        <div ng-controller="bottomRightCtrl">         
+       
+        <div ng-controller="bottomRightCtrl">
             <div id="bottomRightBox">
-                <h1>Fixtures here</h1>
+                <div class="upcomingHeaderTop" style="display: none;">
+                    <h1>{{ upcoming.header }}</h1>
+                </div>
+                <div class="row animate-repeat" ng-repeat="row in upcoming.rows">
+                    <div style="width: {{upcoming.colonewidth}}%" class="upcoming one {{upcoming.colone}}">{{ row.one }}</div>
+                    <div style="width: {{upcoming.coltwowidth}}%" class="upcoming two {{upcoming.coltwo}}">{{ row.two }}</div>
+                    <div style="width: {{upcoming.colthreewidth}}%" class="upcoming three {{upcoming.colthree}}">{{ row.three }}</div>
+                    <div style="width: {{upcoming.colfourwidth}}%" class="upcoming four {{upcoming.colfour}}">{{ row.four }}</div>
+                </div>
+                <div class="upcomingHeaderBottom">
+                    <h1>{{ upcoming.header }}</h1>
+                </div>
             </div>
         </div>
         
