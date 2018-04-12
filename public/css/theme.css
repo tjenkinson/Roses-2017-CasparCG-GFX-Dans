@@ -65,35 +65,37 @@ h1, h2, h3, h4 {
     top: 0px;
     left: 0px;
     background-color: black;
-    width: 1010px;
-    height: 588px;
+    width: 1040px;
+    height: 585px;
 }
 #topRightBox {
     top: 0px;
     right: 0px;
-    width: 270px;
+    width: 240px;
     height: 120px;
     background-color: #1f1a34;
+    border-bottom: 2px solid white;
 }
 #bottomRightBox {
     bottom: 60px;
     right: 0px;
-    width: 270px;
+    width: 240px;
     height: 540px;
-    background-image: url('/images/bottomRightBox.png');
+    background-color: #1f1a34;
     padding-top: 12px;
+    border-top: 2px solid white;
 }
 #bottomLeftBox {
     bottom: 60px;
     left: 0px;
     width: 245px;
     height: 75px;
-    background-color: #1f1a34;
+    background-color: #BC204B;
 }
 #bottomCenterBox {
     bottom: 60px;
     left: 245px;
-    width: 765px;
+    width: 795px;
     height: 75px;
     background-color: #f2f2f2;
 }
@@ -120,7 +122,7 @@ h1, h2, h3, h4 {
     color: white;
     text-align: center;
     position: absolute;
-    width: 270px;
+    width: 240px;
 }
 
 #topRightBox .time h1 {
@@ -146,7 +148,7 @@ h1, h2, h3, h4 {
 /**************************************************/
 
 #bottomRightBox h1 {
-    color: #BC204B;
+    color: white;
     text-align: center;
     position: absolute;
     font-size: 24px;
