@@ -1,10 +1,46 @@
 <div class="ui form segment">
-  <h2>Bottom Left</h2>
+    <h2>Bottom Left</h2>
 
-<div class="ui divider"></div>
+    <div class="ui divider"></div>
     <div class="sixteen wide column">
-      <div class="inline fields">
-  		<div class="five wide field">
-           <input name="livetext" value="Live" placeholder="Live" type="text" ng-model="bottomLeft.header" />
-        </div>  
-	</div>   
+        <div class="inline fields">
+            <div class="five wide field">
+                <input name="livetext" value="Live" placeholder="Live" type="text" ng-model="bottomLeft.header" />
+            </div>  
+            <div class="five wide field">
+                <checkbox size="large" ng-model="bottomLeft.showDescription" type="toggle">Show Description</checkbox>
+            </div>
+        </div>   
+    </div>
+</div>	
+
+<div class="ui segment" ng-repeat="head in bottomLeft.queued">
+  <div class="ui grid">
+    <div class="six wide column">
+      <h2 class="left aligned ui header">
+          <i class="list layout icon"></i>
+          <div class="content">
+              {{head.heading}}
+              <div class="sub header">{{head.description}}</div>
+          </div>
+        </h2>
+    </div>
+
+    <div class="two wide column">
+      
+    </div>
+
+    <div class="two wide column">
+
+    </div>
+
+    <div class="right aligned six wide column">
+      <div class="ui small buttons">
+        <div class="ui positive button" ng-click="show('left', third)" >Left</div>
+      </div>
+      <div class="ui icon red small button">
+        <i class="delete icon" ng-click='remove($index)'></i>
+      </div>
+    </div>
+  </div>
+</div>

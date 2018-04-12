@@ -122,7 +122,7 @@ app.controller('topRightCGController', ['$scope', 'socket',
 
         $scope.$watch('topRight', function() {
             if ($scope.topRight) {
-                socket.emit("bug", $scope.topRight);
+                socket.emit("topRight", $scope.topRight);
             } else {
                 getTopRightData();
             }
@@ -140,96 +140,97 @@ app.controller('topRightCGController', ['$scope', 'socket',
 
 app.controller('bottomRightCGController', ['$scope', 'socket',
     function($scope, socket){
-        socket.on("topRight", function (msg) {
-            $scope.topRight = msg;
+        socket.on("bottomRight", function (msg) {
+            $scope.bottomRight = msg;
         });
 
-        $scope.$watch('topRight', function() {
-            if ($scope.topRight) {
-                socket.emit("bug", $scope.topRight);
+        $scope.$watch('bottomRight', function() {
+            if ($scope.bottomRight) {
+                socket.emit("bottomRight", $scope.bottomRight);
             } else {
-                getTopRightData();
+                getBottomRightData();
             }
         }, true);
         
-        socket.on("topRight", function (msg) {
-            $scope.topRight = msg;
+        socket.on("bottomRight", function (msg) {
+            $scope.bottomRight = msg;
         });
         
-        function getTopRightData() {
-            socket.emit("topRight:get");
+        function getBottomRightData() {
+            socket.emit("bottomRight:get");
         }
     }
 ]);
 
-app.controller('bottomLeftCGController', ['$scope', 'socket',
-    function($scope, socket){
-        socket.on("topRight", function (msg) {
-            $scope.topRight = msg;
+app.controller('bottomLeftCGController', ['$scope', 'socket', 'localStorageService',
+    function($scope, socket, localStorageService){
+        socket.on("bottomLeft", function (msg) {
+            $scope.bottomLeft = msg;
         });
 
-        $scope.$watch('topRight', function() {
-            if ($scope.topRight) {
-                socket.emit("bug", $scope.topRight);
+        $scope.$watch('bottomLeft', function() {
+            if ($scope.bottomLeft) {
+                socket.emit("bottomLeft", $scope.bottomLeft);
             } else {
-                getTopRightData();
+                getBottomLeftData();
             }
         }, true);
         
-        socket.on("topRight", function (msg) {
-            $scope.topRight = msg;
+        socket.on("bottomLeft", function (msg) {
+            $scope.bottomLeft = msg;
         });
         
-        function getTopRightData() {
-            socket.emit("topRight:get");
+        function getBottomLeftData() {
+            socket.emit("bottomLeft:get");
         }
+
     }
 ]);
 
 app.controller('bottomCenterCGController', ['$scope', 'socket',
     function($scope, socket){
-        socket.on("topRight", function (msg) {
-            $scope.topRight = msg;
+        socket.on("bottomCenter", function (msg) {
+            $scope.bottomCenter = msg;
         });
 
-        $scope.$watch('topRight', function() {
-            if ($scope.topRight) {
-                socket.emit("bug", $scope.topRight);
+        $scope.$watch('bottomCenter', function() {
+            if ($scope.bottomCenter) {
+                socket.emit("bottomCenter", $scope.bottomCenter);
             } else {
-                getTopRightData();
+                getBottomCenterData();
             }
         }, true);
         
-        socket.on("topRight", function (msg) {
-            $scope.topRight = msg;
+        socket.on("bottomCenter", function (msg) {
+            $scope.bottomCenter = msg;
         });
         
-        function getTopRightData() {
-            socket.emit("topRight:get");
+        function getBottomCenterData() {
+            socket.emit("bottomCenter:get");
         }
     }
 ]);
 
 app.controller('tickerCGController', ['$scope', 'socket',
     function($scope, socket){
-        socket.on("topRight", function (msg) {
-            $scope.topRight = msg;
+        socket.on("ticker", function (msg) {
+            $scope.ticker = msg;
         });
 
-        $scope.$watch('topRight', function() {
-            if ($scope.topRight) {
-                socket.emit("bug", $scope.topRight);
+        $scope.$watch('ticker', function() {
+            if ($scope.ticker) {
+                socket.emit("ticker", $scope.ticker);
             } else {
-                getTopRightData();
+                getTickerData();
             }
         }, true);
         
-        socket.on("topRight", function (msg) {
-            $scope.topRight = msg;
+        socket.on("ticker", function (msg) {
+            $scope.ticker = msg;
         });
         
-        function getTopRightData() {
-            socket.emit("topRight:get");
+        function getTickerData() {
+            socket.emit("ticker:get");
         }
     }
 ]);

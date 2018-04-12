@@ -61,32 +61,32 @@ app.controller('bugCtrl', ['$scope', '$timeout', 'socket',
 
 app.controller('bottomRightCtrl', ['$scope', 'socket',
     function($scope, socket){
-        socket.on("archery", function (msg) {
-            $scope.archery = msg;
+        socket.on("bottomRight", function (msg) {
+            $scope.bottomRight = msg;
         });
     }
 ]);
 
 app.controller('bottomLeftCtrl', ['$scope', 'socket',
     function($scope, socket){
-        socket.on("archery", function (msg) {
-            $scope.archery = msg;
+        socket.on("bottomLeft", function (msg) {
+            $scope.bottomLeft = msg;
         });
     }
 ]);
 
 app.controller('bottomCenterCtrl', ['$scope', 'socket',
     function($scope, socket){
-        socket.on("archery", function (msg) {
-            $scope.archery = msg;
+        socket.on("bottomCenter", function (msg) {
+            $scope.bottomCenter = msg;
         });
     }
 ]);
 
 app.controller('tickerCtrl', ['$scope', 'socket',
     function($scope, socket){
-        socket.on("archery", function (msg) {
-            $scope.archery = msg;
+        socket.on("ticker", function (msg) {
+            $scope.ticker = msg;
         });
     }
 ]);

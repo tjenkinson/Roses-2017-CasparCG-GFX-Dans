@@ -49,9 +49,9 @@
         <div ng-controller="bottomLeftCtrl">         
             <div id="bottomLeftBox">
                 <div ng-if="bottomLeft.showDescription !== true" class="header">                     
-                    <h1>Content Header Here{{bottomLeft.header}}</h1>
+                    <h1>Header Here{{bottomLeft.header}}</h1>
                 </div>
-                <div ng-if="bottomLeft.showDescription == true" class="discription">                     
+                <div ng-if="bottomLeft.showDescription == true" class="description">                     
                     <h1>Content Description Here{{bottomLeft.description}}</h1>
                 </div>
             </div>
@@ -63,7 +63,7 @@
                     <h1>Main Header {{bottomCenter.header}}</h1>
                 </div>
                 <div ng-if="bottomLeft.showHeader !== true" class="description">                     
-                    <h1>Main Content {{bottomCenter.content}}</h1>
+                    <h1>Look at the size of that thing! Cut the chatter, Red Two. Accelerate to attack speed. This is it, boys! Red Leader, this is Gold Leader. {{bottomCenter.content}}</h1>
                 </div>
             </div>
         </div>
