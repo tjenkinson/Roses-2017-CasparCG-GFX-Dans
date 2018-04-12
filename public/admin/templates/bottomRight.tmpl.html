@@ -23,16 +23,31 @@
     </div>
 
   </div><!-- ui grid center aligned -->
-
-
      <div class="sixteen wide column">
         <div class="ui divider"></div>
         <div class="fields">
-            <div class="sixteen wide field">
+            <div class="eight wide field">
                 <div class="ui center form">
                     <h3>Restrict to only above fixtures</h3>
                     <button class="ui green button" ng-click="showUpcoming()" ng-class="upcoming.rows <= 1 ? 'disabled' : '' ">Show selected</button>
                     <div class="ui red button" ng-click="hideUpcoming()">Allow all fixtures to be shown</div>
+                </div>
+            </div>
+            <div class="four wide field">
+                <div class="ui center form">
+                    <h3>Image Override</h3>
+                     <dropdown title="Pick Image"  ng-model="upcoming.template">
+                        <dropdown-group>image1.jpg</dropdown-group>
+                        <dropdown-group>image2.jpg</dropdown-group>
+                      </dropdown>
+                    <checkbox size="large" ng-model="general.showClock" type="toggle">Activate Image Override</checkbox>
+                </div>
+            </div>
+            <div class="four wide field">
+                <div class="ui center form">
+                    <h3>Image Override</h3>
+                    <button class="ui green button" ng-click="applyImageOverride()">Show selected</button>
+                    <div class="ui red button" ng-click="hideImageOverride()">Remove Image</div>
                 </div>
             </div>
         </div>

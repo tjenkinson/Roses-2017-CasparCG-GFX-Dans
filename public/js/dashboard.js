@@ -142,9 +142,11 @@ app.controller('bottomRightCGController', ['$scope', 'socket', '$http', 'localSt
     function($scope, socket, $http, localStorageService) {
         socket.on("bottomRight", function (msg) {
             $scope.bottomRight = msg;
-            if(msg.rows == null){
-                $scope.getFromStored();
+            if(msg.location == null){
+                console.log("Nothing here, loading defaults");
                 $scope.updateSelectables();
+            } else {
+                console.log("Something here: " + msg);
             }
         });
 
@@ -165,52 +167,18 @@ app.controller('bottomRightCGController', ['$scope', 'socket', '$http', 'localSt
             socket.emit("bottomRight:get");
         }
         
-        function countDownbottomRight() {
-       	    console.log("countDownbottomRight");
-
-       	    setInterval(function(){
-				var end = $scope.bottomRight.nextonTime;
-				var now = new Date();
-				var timeBetween = end - now;
-				var hours = timeBetween.getHours();
-				var minutes = timeBetween.getMinutes();
-				var seconds = timeBetween.getSeconds();
-				$scope.bottomRight.nextonCountdown = hours + ":" + minutes + " : " + seconds;
-			}, 1000);
-        }
+        $scope.applyImageOverride = function() {
+            $scope.bottomRight.imageOveride = true;
+            socket.emit('bottomRight:applyimage', $scope.bottomRight);
+            console.log('Apply Image');
+            console.log($scope.bottomRight); // debugging
+        };
         
-        $scope.getFromStored = function() {
-            var stored = localStorageService.get('bottomRight.rows');
-            $scope.bottomRight.rows = stored;
-            if(stored == null){
-                console.log("Nothing to get from local storage.");
-            } else {
-                console.log("Getting data from store");
-            }
-        }
-        
-        $scope.add = function() {
-            if(!$scope.bottomRight.rows){
-                $scope.bottomRight.rows = [];
-            }
-            $scope.bottomRight.rows.push({left:'', right:'', change: '', color: ''});
-        };
-
-        $scope.remove = function(index){
-            $scope.bottomRight.rows.splice(index, 1);
-            return localStorageService.set('bottomRight.rows',$scope.bottomRight.rows);  
-        };
-
-        $scope.showbottomRight = function() {
-            $scope.bottomRight.show = true;
-            socket.emit('bottomRight', $scope.bottomRight);
-            console.log($scope.bottomRight);
-        };
-
-        $scope.hidebottomRight = function() {
-            $scope.bottomRight.show = false;
-            socket.emit('bottomRight', $scope.bottomRight);
-            console.log("Hide bottomRight");
+        $scope.hideImageOverride = function() {
+            $scope.bottomRight.imageOveride = false;
+            socket.emit('bottomRight:hideimage', $scope.bottomRight);
+            console.log('Hide Image'); 
+            console.log($scope.bottomRight)// debugging
         };
         
         $scope.locationChosen = function() {
@@ -331,9 +299,7 @@ app.controller('bottomRightCGController', ['$scope', 'socket', '$http', 'localSt
                         broadcasts.sort();
                         broadcasts.unshift("All");
                         $scope.bottomRight.broadcasts = broadcasts;
-                        $scope.bottomRight.chosenBroadcast = "All";
-                        console.log("Loading Broadcasts");
-                        
+                        $scope.bottomRight.chosenBroadcast = "All";   
                         
 					 });    
 				};
