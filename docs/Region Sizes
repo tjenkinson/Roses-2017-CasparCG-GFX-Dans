@@ -1,0 +1,17 @@
+Right Top:      240 x 120   Position: right 0, top 0
+Right Center:   240 x 540   Position: right 0, bottom 60
+
+Bottom Left:      245 x 75    Position: left 0, bottom 60
+bottomCenterBox:    795 x 75    Position: left 245, bottom 60
+
+Ticker:         1280 x 30   Position: left 0, bottom 30
+Empty Space:    1280 x 30   Position: left 0, bottom 0
+
+
+TX Area:    1280 - 240          = 1040px Wide
+TX Area:     720 - 30 - 30 - 75 =  585 High
+
+Should be AR of 1.7777 
+
+240 x 120
+240 x 540
