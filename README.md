@@ -1,5 +1,8 @@
 # Roses Live Sports News Graphics 
 
+![alt text](https://raw.githubusercontent.com/danleedham/Roses-Studio-News-Graphics/master/docs/current.png)
+
+
 ## Launching Graphics
 
 ### Windows
