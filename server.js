@@ -62,7 +62,7 @@ io.on('connection', function(socket) {
     socket.on("bug:get", function(msg) {
 		io.sockets.emit("bug", bug);
 	});
-	
+
 	/*
 	 * 		Bottom Left Moments
 	 */
@@ -74,15 +74,15 @@ io.on('connection', function(socket) {
     socket.on("bottomLeft:get", function(msg) {
 		io.sockets.emit("bottomLeft", msg);
 	});
-	
+
 	socket.on("momentsUpdated", function(msg){
 		io.sockets.emit("momentsUpdated", msg);
 	});
-	
+
 	socket.on("pleaseSendMoments", function(msg){
 		io.sockets.emit("pleaseSendMoments", msg);
 	});
-	
+
 	/*
 	* 		Bottom Right Fixtures
 	*/
@@ -94,7 +94,7 @@ io.on('connection', function(socket) {
     socket.on("bottomRight:get", function(msg) {
 		io.sockets.emit("bottomRight", bottomRight);
 	});
-	
+
 	/*
 	* 		Ticker
 	*/
@@ -106,13 +106,13 @@ io.on('connection', function(socket) {
     socket.on("ticker:get", function(msg) {
 		io.sockets.emit("ticker", ticker);
 	});
-	
+
 });
-	
+
 
 //Serve the puplic dir
 app.use(express.static(__dirname + "/public"));
 
-server.listen(3000);
-console.log("Now listening on port 3000. Go to http://127.0.0.1:3000/admin to control")
-console.log("run 'play 1-1 [html] http://127.0.0.1:3000' in CasparCG to start the graphics")
+server.listen(3001);
+console.log("Now listening on port 3000. Go to http://127.0.0.1:3001/admin to control")
+console.log("run 'play 1-1 [html] http://127.0.0.1:3001/' in CasparCG to start the graphics")
