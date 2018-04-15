@@ -52,10 +52,6 @@ h1, h2, h3, h4 {
   clear: both;
 }
 
-/**************************************************/
-/*              [Layout]                          */
-/**************************************************/
-
 #txAreaBox, #topRightBox, #bottomRightBox, #bottomLeftBox, #bottomCenterBox, #tickerBox {
     position: absolute;
     overflow: hidden;   
@@ -144,17 +140,57 @@ h1, h2, h3, h4 {
 }
 
 /**************************************************/
-/*              [Bottom Right Box]                */
+/*            [Bottom Right Box Fixtures]         */
 /**************************************************/
 
 #bottomRightBox h1 {
-    color: white;
-    text-align: center;
-    position: absolute;
+    color: #1f1a34;
+    text-align: left;
     font-size: 24px;
     width: 100%;
     padding-left: 12px;
     padding-right: 12px;
+    line-height: 26px;
+    padding-bottom: 12px;
+}
+
+#bottomRightBox .row {
+    margin-left: 6px;
+    margin-right: 6px;
+    width: calc(100% - 12px);
+    margin-bottom: 6px;
+    background-color: #BC204B;
+    
+}
+
+
+#bottomRightBox .fixtureGroup {
+    width: 160px;
+    display: inline-block;
+    text-transform: capitalize;
+    padding-right: 3px;
+    background-color: white;
+    padding: 6px;
+    border-radius: 0px 0px 10px;
+}
+
+#bottomRightBox .fixtureTime,  #bottomRightBox .fixtureDay, #bottomRightBox .fixturePoints  {
+    width: 65px;
+    float: right;
+    text-align: center;
+    display: inline-block;
+    background-color: #BC204B;
+    color: White;
+    padding: 6px;
+}
+
+#bottomRightBox .fixtureTime {
+    display: inline-block;
+    font-weight: bold;
+}
+
+#bottomRightBox .fixturePoints,  #bottomRightBox .fixtureDay {
+    display: none; /* This will be changed dynamically in index.html */
 }
 
 
@@ -248,7 +284,7 @@ h1, h2, h3, h4 {
     display: inline-block;
     padding-left: 100%;
     text-indent: 0;
-    animation: marquee 30s linear infinite;
+    animation: marquee 45s linear infinite;
 }
 
 @keyframes marquee {

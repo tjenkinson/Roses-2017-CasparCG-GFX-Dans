@@ -9,8 +9,7 @@ var io = require('socket.io').listen(server);
 var bug = {livetext: "Live", locationtext: ''};
 var topRight = {};
 var bottomRight = {};
-var bottomLeft = {header: "Header Text"};
-var bottomCenter = {};
+var bottomLeft = {};
 var ticker = {};
 
 //Clock Functions
@@ -19,7 +18,6 @@ var stopwatch = new Stopwatch();
 stopwatch.on('tick:stopwatch', function(time) {
 	io.sockets.emit("clock:tick", time);
 });
-
 
 
 io.on('connection', function(socket) {
@@ -66,7 +64,7 @@ io.on('connection', function(socket) {
 	});
 	
 	/*
-	 * 		Bottom Left Functions
+	 * 		Bottom Left Moments
 	 */
 	socket.on("bottomLeft", function(msg) {
         bottomLeft = msg;
@@ -74,7 +72,15 @@ io.on('connection', function(socket) {
 	});
 
     socket.on("bottomLeft:get", function(msg) {
-		io.sockets.emit("bottomLeft", bug);
+		io.sockets.emit("bottomLeft", msg);
+	});
+	
+	socket.on("momentsUpdated", function(msg){
+		io.sockets.emit("momentsUpdated", msg);
+	});
+	
+	socket.on("pleaseSendMoments", function(msg){
+		io.sockets.emit("pleaseSendMoments", msg);
 	});
 	
 	/*
@@ -87,6 +93,18 @@ io.on('connection', function(socket) {
 
     socket.on("bottomRight:get", function(msg) {
 		io.sockets.emit("bottomRight", bottomRight);
+	});
+	
+	/*
+	* 		Ticker
+	*/
+	socket.on("ticker", function(msg) {
+        ticker = msg;
+		io.sockets.emit("ticker", msg);
+	});
+
+    socket.on("ticker:get", function(msg) {
+		io.sockets.emit("ticker", ticker);
 	});
 	
 });

@@ -1,5 +1,5 @@
 Right Top:      240 x 120   Position: right 0, top 0
-Right Center:   240 x 540   Position: right 0, bottom 60
+Right Bottom:   240 x 540   Position: right 0, bottom 60
 
 Bottom Left:      245 x 75    Position: left 0, bottom 60
 bottomCenterBox:    795 x 75    Position: left 245, bottom 60
@@ -15,3 +15,7 @@ Should be AR of 1.7777
 
 240 x 120
 240 x 540
+
+
+Right Bottom: 240 x
+Bottom Center: 1280 - 245 = 1035
