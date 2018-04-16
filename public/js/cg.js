@@ -28,16 +28,12 @@ app.controller('topRightCtrl', ['$scope', '$timeout', 'socket',
 // Bottom Right Fixtures
 app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
     function($scope, $interval, $http, socket){
-        $scope.fixturesTickInterval = 60000; //ms
-        $scope.fixturesOnScreen = 10000; //ms    
+        $scope.fixturesTickInterval = 10000; //ms
+        $scope.fixturesOnScreen = 2000; //ms    
         if($scope.bottomRight == undefined){
             $scope.bottomRight = [];
         }
-        
-        socket.on("bottomRight", function (msg) {
-            $scope.bottomRight = msg;
-        });        
-        
+                
         socket.on("bottomRight", function (msg) {
             $scope.bottomRight = msg;
             if ($scope.bottomRight) {
@@ -73,56 +69,71 @@ app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
             };
             
             $http.get('/data/timetable_entries_example.json', config).then(function (response) {
-                    console.log('Updating fixtures');
-                    var newLivebottomRight = {"rows" : []}; 
+                    // console.log('Updating fixtures');
+                    
                     var daysOfWeek = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
                     
-                    for(var i = 0; i < response.data.length; i++){
-                        var buildArray = {};  
-                            
-                        dateTimeString = response.data[i].start;
-                        dateTime = new Date(dateTimeString);
-                          var day = daysOfWeek[dateTime.getDay()];
-                          var hours = dateTime.getHours();
-                          var minutes = dateTime.getMinutes();
-                          // var ampm = hours >= 12 ? 'pm' : 'am';
-                          // hours = hours % 12;
-                          // hours = hours ? hours : 12; // the hour '0' should be '12'
-                          hours = hours < 10 ? '0'+hours : hours;
-                          minutes = minutes < 10 ? '0'+minutes : minutes;
-                          var strTime = '' + hours + ':' + minutes;
-                        response.data[i].time = strTime;                     
-                        
-                        buildArray["id"] = response.data[i].id;
-                        buildArray["sport"] = response.data[i].team.sport.title;
-                        buildArray["time"] = strTime; 
-                        buildArray["day"] = day;
-                        buildArray["group"] = response.data[i].team.title;
-                        buildArray["location"] = response.data[i].location.name;
-                        buildArray["la1tv"] = response.data[i].la1tv_coverage_level;
-                        buildArray["points"] = response.data[i].point.amount;
-                        newLivebottomRight["rows"].push(buildArray);
-        
-                    }                            
-                    $scope.bottomRight.chosenSport = newLivebottomRight["rows"][0].sport;
-                    $scope.bottomRight.rows = newLivebottomRight["rows"];                 
-                    console.log($scope.bottomRight);
-                    
-                    
-                    // Change the sports every so often
-                    if($scope.bottomRight.chosenSportSwitching !== true) {
-                        $interval(changeSport,$scope.fixturesOnScreen);
-                        // console.log('Starting the cycle');
+                    // Need to do a check here to see if the data has changed, if so then carry on cowboy. 
+                    var fixturesFileUpdated = new Date(response.headers('Last-Modified'));
+                                        
+                    if(fixturesFileUpdated >= $scope.bottomRight.fixturesFileUpdated) {
+                        // console.log('No new fixtures');
                     } else {
-                        // console.log('Cycle already peddling');
+                        $scope.bottomRight.fixturesFileUpdated = fixturesFileUpdated;
+                        // console.log('New fixtures');
+                        var newLivebottomRight = {"rows" : []}; 
+                    
+                        for(var i = 0; i < response.data.length; i++){
+                            var buildArray = {};  
+                            
+                            dateTimeString = response.data[i].start;
+                            dateTime = new Date(dateTimeString);
+                              var day = daysOfWeek[dateTime.getDay()];
+                              var hours = dateTime.getHours();
+                              var minutes = dateTime.getMinutes();
+                              // var ampm = hours >= 12 ? 'pm' : 'am';
+                              // hours = hours % 12;
+                              // hours = hours ? hours : 12; // the hour '0' should be '12'
+                              hours = hours < 10 ? '0'+hours : hours;
+                              minutes = minutes < 10 ? '0'+minutes : minutes;
+                              var strTime = '' + hours + ':' + minutes;
+                            response.data[i].time = strTime;                     
+                        
+                            buildArray["id"] = response.data[i].id;
+                            buildArray["sport"] = response.data[i].team.sport.title;
+                            buildArray["time"] = strTime; 
+                            buildArray["day"] = day;
+                            buildArray["group"] = response.data[i].team.title;
+                            buildArray["location"] = response.data[i].location.name;
+                            buildArray["la1tv"] = response.data[i].la1tv_coverage_level;
+                            buildArray["points"] = response.data[i].point.amount;
+                            newLivebottomRight["rows"].push(buildArray);
+        
+                        }                            
+                    
+                        if($scope.bottomRight.chosenSport == undefined){
+                            $scope.bottomRight.chosenSport = newLivebottomRight["rows"][0].sport;
+                        }
+                        $scope.bottomRight.rows = newLivebottomRight["rows"];                 
+                        console.log($scope.bottomRight);
+                    
+                    
+                        // Change the sports every so often
+                        if($scope.bottomRight.chosenSportSwitching !== true) {
+                            $interval(changeSport,$scope.fixturesOnScreen);
+                            // console.log('Starting the cycle');
+                        } else {
+                            // console.log('Cycle already peddling');
+                        }
                     }
+
                  });    
             };
             
             fetchData();	         		     						
         };
         
-        
+        // Function that cycles fixtures sports. 
         var changeSport = function(){
             var i = 0;
             if($scope.bottomRight.rows !== undefined){
@@ -157,7 +168,7 @@ app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
         // First fetch plz
         updateFixtures();
         
-        // Start the timer
+        // Start the timer to update fixtures
         $interval(updateFixtures, $scope.fixturesTickInterval);
         
         
@@ -215,7 +226,7 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
                         buildArray["author"] = data[i].author;
                         buildArray["team_name"] = data[i].team_name;
                     
-                        moments[i] = buildArray;
+                        moments.push(buildArray);
                             
                         // Allow the user to set how many moments we cycle through later
                         if(i == 4) {
