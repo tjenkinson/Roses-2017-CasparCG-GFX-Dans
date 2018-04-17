@@ -265,43 +265,56 @@ strong {
 /*              [Ticker Box]                      */
 /**************************************************/
 
-#tickerBox .tickerText {
-    margin: 0 auto;
-    white-space: nowrap;
+#tickerBox {
     overflow: hidden;
-    box-sizing: border-box;
+    white-space: nowrap;
 }
 
-#tickerBox .tickerText .tickerHeader {
+.tickerText1 {
+  display: inline-block;
+  animation: marquee 60s linear infinite;
+  width: -webkit-min-content
+}
+
+.tickerText2 {
+  display: inline-block;
+  animation: marquee2 60s linear infinite;
+  animation-delay: 30s;
+  width: -webkit-min-content
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes marquee2 {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    transform: translateX(-200%);
+  }
+}
+
+#tickerBox .tickerHeader {
     background-color: white;
     padding-left: 12px;
     padding-right: 12px;
     color: #1f1a34;
-    font-size: 24px;   
+    font-size: 24px;
+    margin-left: 12px;   
 }
 
-#tickerBox .tickerText p {
+#tickerBox .tickerText1, #tickerBox .tickerText2  {
     color: white;
     font-size: 24px;
     line-height: 30px;
-    position: absolute;
-    width: 100%;
     height: 100%;
     margin: 0;
     text-align: center;
-    /* color: #1f1a34; */
-    white-space:nowrap;
-    
-}
-
-#tickerBox .tickerText span {
-    display: inline-block;
-    padding-left: 100%;
-    text-indent: 0;
-    animation: marquee 45s linear infinite;
-}
-
-@keyframes marquee {
-    0%   { transform: translate(0, 0); }
-    100% { transform: translate(-100%, 0); }
 }
