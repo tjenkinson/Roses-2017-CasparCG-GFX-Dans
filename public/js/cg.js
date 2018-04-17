@@ -1,13 +1,5 @@
 var app = angular.module('cgApp', ['ngAnimate', 'socket-io']);
 
-app.controller('archeryCtrl', ['$scope', 'socket',
-    function($scope, socket){
-        socket.on("archery", function (msg) {
-            $scope.archery = msg;
-        });
-    }
-]);
-
 app.controller('topRightCtrl', ['$scope', '$timeout', 'socket',
     function($scope, $timeout, socket){
         $scope.tickInterval = 1000; //ms
@@ -28,8 +20,8 @@ app.controller('topRightCtrl', ['$scope', '$timeout', 'socket',
 // Bottom Right Fixtures
 app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
     function($scope, $interval, $http, socket){
-        $scope.fixturesTickInterval = 10000; //ms
-        $scope.fixturesOnScreen = 2000; //ms    
+        $scope.fixturesTickInterval = 60000; //ms
+        $scope.fixturesOnScreen = 10000; //ms    
         if($scope.bottomRight == undefined){
             $scope.bottomRight = [];
         }
@@ -180,7 +172,8 @@ app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
 app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
     function($scope, $interval, $http, socket, $sce){
         $scope.moments = {"moments":[]};
-        $scope.momentsTickInterval = 30000;
+        $scope.momentsCheckTickInterval = 30000;
+        $scope.momentsSwapTickInterval = 6000;
         $scope.latestMomentId = "";
         
         socket.on("pleaseSendMoments", function(){
@@ -209,46 +202,70 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
                 console.log("Roses live is giving us nonsense");
                 return;
               } else { 
-                 // Sort Array so we're getting the most recent
                  
+                 // Sort Array so we're getting the most recent content
+                 
+                 data.sort(function(a, b){
+                    var keyA = new Date(a.updated_at),
+                        keyB = new Date(b.updated_at);
+                    // Compare the 2 dates
+                    if(keyA < keyB) return -1;
+                    if(keyA > keyB) return 1;
+                    return 0;
+                });
+                
                 // Check the latest moment's ID
                 if($scope.latestMomentId !== data[0].id){
-          
-                    var buildArray = {};  
-                    var moments = [];
-                               
+     
+                    var moments = {"rows" : []};                           
                     for(i=0; i<data.length; i++){
                         var buildArray = {};  
-                        buildArray["text"] = data[i].text;
-                        buildArray["updated_at"] = data[i].updated_at;
                         buildArray["id"] = data[i].id;
+                        data[i].text = data[i].text.replace('<Strong>Lancs','<Strong class="teamLancs"> Lancs');
+                        
+                        data[i].text = data[i].text.replace('<Strong>York','<Strong class="teamYork"> York');
+                        buildArray["text"] = data[i].text
+                        buildArray["updated_at"] = data[i].updated_at;
                         buildArray["type"] = data[i].live_moment_type.name;
                         buildArray["author"] = data[i].author;
                         buildArray["team_name"] = data[i].team_name;
-                    
-                        moments.push(buildArray);
-                            
-                        // Allow the user to set how many moments we cycle through later
-                        if(i == 4) {
-                            break;
-                        }
+                        moments.rows.push(buildArray);
                     }
                     
-                    // This is where I need to do more stuff to do with content
-                    // For now we'll just return the most recent moment
+
+
                     $scope.moments = moments;
                     socket.emit('momentsUpdated', moments);
-                    $scope.latestMomentId = moments[0].id;
+                    $scope.latestMomentId = moments.rows[0].id;
                     
-                    if(moments[0].type == "Tweet"){
-                        $scope.momentsHeader = moments[0].author;
-                    } else  if (moments[0].type == "Score Update"){
+                    for(i=0; i<moments.rows.length; i++){
+                        // Here we add any moment type specific info
+                        if(moments.rows[i].type == "Tweet"){
+                            $scope.moments.rows[i].header = moments.rows[i].author;
+                            if(moments.rows[i].text.indexOf('https://t.co/') > -1){
+                                var text = moments.rows[i].text.substr(0, moments.rows[i].text.indexOf('https://t.co/'));
+                                $scope.moments.rows[i].content = $sce.trustAsHtml(text);
+                            } else {
+                                $scope.moments.rows[i].content = $sce.trustAsHtml(moments.rows[i].text);
+                            }
+                            
+                        } else  if (moments.rows[i].type == "Score Update"){
+                            var team = moments.rows[i].text.substr(0, moments.rows[i].text.indexOf(',')); 
+                            $scope.moments.rows[i].header = team;
+                            $scope.moments.rows[i].content = $sce.trustAsHtml(moments.rows[i].text);
+                        } else {
+                            $scope.moments.rows[i].header = moments.rows[i].type;
+                            $scope.moments.rows[i].content = $sce.trustAsHtml(moments.rows[i].text);
+                        }
+          
                         
-                    } else {
-                        $scope.momentsHeader = moments[0].type;
                     }
-                    $scope.momentsContent = $sce.trustAsHtml(moments[0].text);
                 
+                    console.log($scope.moments);
+                    rotateMoments();
+                    $interval(rotateMoments, $scope.momentsSwapTickInterval);
+                    
+                    // $scope.currentMomentId = 9816;
                 } else {
                     // console.log("nothing's changed");
                 }               
@@ -258,13 +275,33 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
             }
           );
         };
-                
+         
+         
+        var rotateMoments = function(){
+            if($scope.moments.rows.length > 0){
+                if($scope.currentMomentId  == undefined){
+                    $scope.currentMomentId = $scope.moments.rows[0].id;
+                    console.log("Setting first moment");
+                } else {
+                    for(i=0; i<$scope.moments.rows.length; i++){
+                        if($scope.moments.rows[i].id == $scope.currentMomentId){
+                            currenti = i + 1;
+                            if(currenti == $scope.moments.rows.length){
+                                currenti = 0;
+                            }
+                        }
+                    }
+                    $scope.currentMomentId = $scope.moments.rows[currenti].id;
+                }
+            } 
+            // console.log($scope.currentMomentId);  
+        }       
+        
         // First fetch plz
         fetchMoments();
         
         // Start the timer
-        $interval(fetchMoments, $scope.momentsTickInterval);
-        
+        $interval(fetchMoments, $scope.momentsCheckTickInterval); 
         
     }
 ]);
@@ -273,6 +310,18 @@ app.controller('tickerCtrl', ['$scope', 'socket',
     function($scope, socket){
         socket.on("ticker", function (msg) {
             $scope.ticker = msg;
+            $scope.ticker.tickerHeader = "Latest Scores";
+            $scope.ticker.tickerText = "General Kenobi, years ago you served my father in the Clone Wars. Now he begs you to help him in his struggle against the Empire. I regret that I am unable to present my father's request to you in person, but my ship has fallen under attack and I'm afraid my mission to bring you to Alderaan has failed. I have placed information vital to the survival of the Rebellion into the memory systems of this R2 unit. My father will know how to retrieve it. You must see this droid safely delivered to him on Alderaan. This is our most desperate hour. Help me, Obi-Wan Kenobi, you're my only hope.";
         });
+        
+        $scope.$watch('ticker', function() {
+            if (!$scope.ticker) {
+                getTickerData();
+            }
+        }, true);
+
+        function getTickerData() {
+            socket.emit("ticker:get");
+        }
     }
 ]);

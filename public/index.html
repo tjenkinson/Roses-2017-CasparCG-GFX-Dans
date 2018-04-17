@@ -46,7 +46,7 @@
         <div ng-controller="bottomRightCtrl">
             <div id="bottomRightBox">
                 <h1>{{bottomRight.chosenSport}}</h1>
-                <div class="row animate-repeat bouncy-slide-left" ngif="bottomRight.chosenSport == row.sport" ng-repeat="row in bottomRight.rows | filter: { sport: bottomRight.chosenSport }"">
+                <div class="row animate-repeat bouncy-slide-left" ngif="bottomRight.chosenSport == row.sport" ng-repeat="row in bottomRight.rows | filter: { sport: bottomRight.chosenSport }">
                     <div class="fixtureGroup">{{ row.group }}</div>
                     <div class="fixtureTime">{{ row.time }}</div>
                     <div class="fixtureDay">{{ row.day }}</div>
@@ -56,20 +56,17 @@
         </div>
         
         <div ng-controller="bottomLeftCtrl">         
-            <div id="bottomLeftBox">
-                <div ng-if="bottomLeft.showDescription !== true" class="header">                     
-                    <h1>{{momentsHeader}}</h1>
+            
+            <div class="animate-repeat" ng-repeat="moment in moments.rows | filter: { id: currentMomentId }"> 
+                <div id="bottomLeftBox">   
+                    <div class="header">                 
+                        <h1>{{moment.header}}</h1>
+                    </div>
                 </div>
-                <div ng-if="bottomLeft.showDescription == true" class="description">                     
-                    <h1></h1>
-                </div>
-            </div>
-            <div id="bottomCenterBox">
-              <div ng-if="bottomLeft.showHeader == true" class="header">                     
-                    <h1>{{momentsHeader}}</h1>
-                </div>
-                <div ng-if="bottomLeft.showHeader !== true" class="description">                     
-                    <h1 ng-bind-html="momentsContent"></h1>
+                <div id="bottomCenterBox">
+                    <div class="description">                     
+                        <h1 ng-bind-html="moment.content"></h1>
+                    </div>
                 </div>
             </div>
         </div>
@@ -77,8 +74,8 @@
         <div ng-controller="tickerCtrl">         
             <div id="tickerBox">
                 <div class="tickerText">                           
-                    <p><span><span class="tickerHeader">Latest Scores</span>    
-                    {{tickertickerticker}} General Kenobi, years ago you served my father in the Clone Wars. Now he begs you to help him in his struggle against the Empire. I regret that I am unable to present my father's request to you in person, but my ship has fallen under attack and I'm afraid my mission to bring you to Alderaan has failed. I have placed information vital to the survival of the Rebellion into the memory systems of this R2 unit. My father will know how to retrieve it. You must see this droid safely delivered to him on Alderaan. This is our most desperate hour. Help me, Obi-Wan Kenobi, you're my only hope.</span></p> 
+                    <p><span><span class="tickerHeader">{{ticker.tickerHeader}}</span>
+                    {{ticker.tickerText}}</span></p> 
                 </div>
             </div>
             

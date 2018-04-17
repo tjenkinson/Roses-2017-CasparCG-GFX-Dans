@@ -6,7 +6,6 @@ var app = express();
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 
-var bug = {livetext: "Live", locationtext: ''};
 var topRight = {};
 var bottomRight = {};
 var bottomLeft = {};
@@ -115,4 +114,3 @@ app.use(express.static(__dirname + "/public"));
 
 server.listen(3000);
 console.log("Now listening on port 3000. Go to http://127.0.0.1:3000/admin to control")
-console.log("run 'play 1-1 [html] http://127.0.0.1:3000' in CasparCG to start the graphics")

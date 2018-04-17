@@ -110,6 +110,20 @@ h1, h2, h3, h4 {
     height: 30px;
 }
 
+/* Fix for moments */
+strong {
+    margin-left: 6px;
+    margin-right: 6px;
+    font-weight: bold;
+}
+
+.teamLancs {
+    color: #b5121b;
+}
+
+.teamYork {
+    color: #fcaf17;
+}
 /**************************************************/
 /*              [Top Right Box]                   */
 /**************************************************/
@@ -213,7 +227,7 @@ h1, h2, h3, h4 {
 }
 
 #bottomLeftBox .header h1 {
-    font-size: 28px;
+    font-size: 24px;
 }
 
 #bottomLeftBox .description h1 {
