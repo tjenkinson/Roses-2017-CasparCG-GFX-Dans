@@ -107,7 +107,7 @@ app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
                             $scope.bottomRight.chosenSport = newLivebottomRight["rows"][0].sport;
                         }
                         $scope.bottomRight.rows = newLivebottomRight["rows"];                 
-                        console.log($scope.bottomRight);
+                        // console.log($scope.bottomRight);
                     
                     
                         // Change the sports every so often
@@ -195,17 +195,15 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
             }
           };
 
-          $http.get('data/feed_example.json', config)
-            .success(function(data) {
-            
-              if(isNaN(data[0].id) || isNaN(data[0].id)){
+          $http.get('data/feed_example.json', config).then(function(response) {
+              if(isNaN(response.data[0].id) || isNaN(response.data[0].id)){
                 console.log("Roses live is giving us nonsense");
                 return;
               } else { 
                  
                  // Sort Array so we're getting the most recent content
                  
-                 data.sort(function(a, b){
+                 response.data.sort(function(a, b){
                     var keyA = new Date(a.updated_at),
                         keyB = new Date(b.updated_at);
                     // Compare the 2 dates
@@ -214,27 +212,26 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
                     return 0;
                 });
                 
+                var momentsFileUpdated = new Date(response.headers('Last-Modified'));
                 // Check the latest moment's ID
-                if($scope.latestMomentId !== data[0].id){
-     
-                    var moments = {"rows" : []};                           
-                    for(i=0; i<data.length; i++){
+                if($scope.latestMomentId !== response.data[0].id){
+                    $scope.latestMomentId = response.data[0].id;
+                    var moments = {"rows" : [], "momentsFileUpdated" : momentsFileUpdated};                           
+                    for(i=0; i<response.data.length; i++){
                         var buildArray = {};  
-                        buildArray["id"] = data[i].id;
-                        data[i].text = data[i].text.replace('<Strong>Lancs','<Strong class="teamLancs"> Lancs');
+                        buildArray["id"] = response.data[i].id;
+                        response.data[i].text = response.data[i].text.replace('<Strong>Lancs','<Strong class="teamLancs"> Lancs');
                         
-                        data[i].text = data[i].text.replace('<Strong>York','<Strong class="teamYork"> York');
-                        buildArray["text"] = data[i].text
-                        buildArray["updated_at"] = data[i].updated_at;
-                        buildArray["type"] = data[i].live_moment_type.name;
-                        buildArray["author"] = data[i].author;
-                        buildArray["team_name"] = data[i].team_name;
+                        response.data[i].text = response.data[i].text.replace('<Strong>York','<Strong class="teamYork"> York');
+                        buildArray["text"] = response.data[i].text
+                        buildArray["updated_at"] = response.data[i].updated_at;
+                        buildArray["type"] = response.data[i].live_moment_type.name;
+                        buildArray["author"] = response.data[i].author;
+                        buildArray["team_name"] = response.data[i].team_name;
                         moments.rows.push(buildArray);
                     }
-                    
 
-
-                    $scope.moments = moments;
+                    $scope.moments.rows = moments.rows;
                     socket.emit('momentsUpdated', moments);
                     $scope.latestMomentId = moments.rows[0].id;
                     
@@ -257,17 +254,15 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
                             $scope.moments.rows[i].header = moments.rows[i].type;
                             $scope.moments.rows[i].content = $sce.trustAsHtml(moments.rows[i].text);
                         }
-          
-                        
+                          
                     }
                 
-                    console.log($scope.moments);
+                    // console.log($scope.moments);
                     rotateMoments();
                     $interval(rotateMoments, $scope.momentsSwapTickInterval);
-                    
-                    // $scope.currentMomentId = 9816;
+
                 } else {
-                    // console.log("nothing's changed");
+                    //console.log("No new Moments");
                 }               
                
               }              
@@ -281,7 +276,7 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
             if($scope.moments.rows.length > 0){
                 if($scope.currentMomentId  == undefined){
                     $scope.currentMomentId = $scope.moments.rows[0].id;
-                    console.log("Setting first moment");
+                    // console.log("Setting first moment");
                 } else {
                     for(i=0; i<$scope.moments.rows.length; i++){
                         if($scope.moments.rows[i].id == $scope.currentMomentId){
@@ -306,12 +301,15 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
     }
 ]);
 
-app.controller('tickerCtrl', ['$scope', 'socket',
-    function($scope, socket){
+app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
+    function($scope, $interval, $http, socket, $sce){
+        $scope.fixturesLookup = {};
+        
+        $scope.ticker = {"ticker":[]};
+        $scope.tickerCheckTickInterval = 10000;
+        
         socket.on("ticker", function (msg) {
             $scope.ticker = msg;
-            $scope.ticker.tickerHeader = "Latest Scores";
-            $scope.ticker.tickerText = "General Kenobi, years ago you served my father in the Clone Wars. Now he begs you to help him in his struggle against the Empire. I regret that I am unable to present my father's request to you in person, but my ship has fallen under attack and I'm afraid my mission to bring you to Alderaan has failed. I have placed information vital to the survival of the Rebellion into the memory systems of this R2 unit. My father will know how to retrieve it. You must see this droid safely delivered to him on Alderaan. This is our most desperate hour. Help me, Obi-Wan Kenobi, you're my only hope.";
         });
         
         $scope.$watch('ticker', function() {
@@ -323,5 +321,88 @@ app.controller('tickerCtrl', ['$scope', 'socket',
         function getTickerData() {
             socket.emit("ticker:get");
         }
+        
+        var fetchTickerScores = function () {
+            var config = {headers:  {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+                }
+            };
+
+            Promise.all([$http.get('data/results_example.json', config), $http.get('data/timetable_entries_example.json', config)]).then(function(values) {
+ 
+                var response = values[0];  
+                var timetable = values[1];  
+
+              if(isNaN(response.data[0].id) || isNaN(response.data[0].id)){
+                console.log("Roses live is giving us nonsense. Typical.");
+                return;
+              } else { 
+                 
+                 // Sort Array so we're getting the most recent content
+                 
+                 response.data.sort(function(a, b){
+                    var keyA = new Date(a.updated_at),
+                        keyB = new Date(b.updated_at);
+                    // Compare the 2 dates
+                    if(keyA < keyB) return -1;
+                    if(keyA > keyB) return 1;
+                    return 0;
+                });
+                
+                var tickerFileUpdated = new Date(response.headers('Last-Modified'));      
+                if($scope.ticker.tickerFileUpdated == undefined){
+                    $scope.ticker.tickerFileUpdated = tickerFileUpdated;
+                }
+
+                if(tickerFileUpdated >= $scope.ticker.tickerFileUpdated){
+                    var ticker = {"rows" : [], "tickerFileUpdated" : tickerFileUpdated }; 
+                    for(i=0; i<response.data.length; i++){
+                        var buildArray = {};  
+                        buildArray["id"] = response.data[i].id;
+                        buildArray["lancs_score"] = response.data[i].lancs_score;
+                        buildArray["york_score"] = response.data[i].york_score;
+                        buildArray["winner"] = response.data[i].winner;
+                        buildArray["timetable_entry_id"] = response.data[i].timetable_entry_id;
+                        buildArray["confirmed"] = response.data[i].confirmed;
+                        ticker.rows.push(buildArray);
+                    }
+
+                    $scope.ticker.rows = ticker.rows;
+                    socket.emit('tickerUpdated', ticker);
+                    
+                    $scope.ticker.tickerText = "";
+                    
+                    for(i=0; i<2; i++){
+                        
+                        var timetableIndex = timetable.findIndex(function(element){ return element == ticker.row[i].timetable_entry_id});
+                        
+                        var timetableInfo = timetable[timetableIndex];
+                        console.log(timetableInfo);
+                       
+                        var iScoreString = ticker.rows[i].lancs_score + ' - ' +  ticker.rows[i].york_score;
+                        $scope.ticker.tickerText =  $scope.ticker.tickerText + iScoreString;
+                        
+                    }
+                
+                    $scope.ticker.tickerHeader = "Latest Scores";
+
+                    // $scope.currentMomentId = 9816;
+                } else {
+                    // console.log("nothing's changed");
+                }               
+               
+              }              
+        
+            }
+          );
+        };
+        
+            
+        // First fetch plz
+        fetchTickerScores();
+        
+        // Start the timer
+        $interval(fetchTickerScores, $scope.tickerCheckTickInterval);
     }
 ]);
