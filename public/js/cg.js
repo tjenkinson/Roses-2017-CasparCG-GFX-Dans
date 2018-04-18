@@ -362,6 +362,13 @@ app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
                         buildArray["id"] = response.data[i].id;
                         buildArray["lancs_score"] = response.data[i].lancs_score;
                         buildArray["york_score"] = response.data[i].york_score;
+                        if(response.data[i].winner == "L"){
+                            response.data[i].winner = "Lancs Win";
+                        } else if (response.data[i].winner == "Y") {
+                            response.data[i].winner = "York Win";
+                        } else {
+                            // Leave it be.
+                        }
                         buildArray["winner"] = response.data[i].winner;
                         buildArray["timetable_entry_id"] = response.data[i].timetable_entry_id;
                         buildArray["confirmed"] = response.data[i].confirmed;
@@ -372,15 +379,13 @@ app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
                     socket.emit('tickerUpdated', ticker);
                     
                     $scope.ticker.tickerText = "";
-                    
                     for(i=0; i<2; i++){
+
+                        var timetableIndex = timetable.data.findIndex(function(element){ return element.id == ticker.rows[i].timetable_entry_id});
                         
-                        var timetableIndex = timetable.findIndex(function(element){ return element == ticker.row[i].timetable_entry_id});
+                        var timetableInfo = timetable.data[timetableIndex];
                         
-                        var timetableInfo = timetable[timetableIndex];
-                        console.log(timetableInfo);
-                       
-                        var iScoreString = ticker.rows[i].lancs_score + ' - ' +  ticker.rows[i].york_score;
+                        var iScoreString = timetableInfo.team.sport.title + " " + timetableInfo.team.title + ": " + ticker.rows[i].winner + " " + ticker.rows[i].lanc_score + ' - ' +  ticker.rows[i].york_score + "    ";
                         $scope.ticker.tickerText =  $scope.ticker.tickerText + iScoreString;
                         
                     }
