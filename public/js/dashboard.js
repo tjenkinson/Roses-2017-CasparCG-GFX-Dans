@@ -124,15 +124,15 @@ app.controller('bottomRightCGController', ['$scope', 'socket', '$http', 'localSt
         $scope.applyImageOverride = function() {
             $scope.bottomRight.imageOveride = true;
             socket.emit('bottomRight:applyimage', $scope.bottomRight);
-            console.log('Apply Image');
-            console.log($scope.bottomRight); // debugging
+            //console.log('Apply Image');
+            // console.log($scope.bottomRight); // debugging
         };
         
         $scope.hideImageOverride = function() {
             $scope.bottomRight.imageOveride = false;
             socket.emit('bottomRight:hideimage', $scope.bottomRight);
-            console.log('Hide Image'); 
-            console.log($scope.bottomRight)// debugging
+            // console.log('Hide Image'); 
+            // console.log($scope.bottomRight)// debugging
         };
         
         $scope.locationChosen = function() {
@@ -142,10 +142,10 @@ app.controller('bottomRightCGController', ['$scope', 'socket', '$http', 'localSt
             $scope.updateSelectables($scope.bottomRight.chosenLocation,$scope.bottomRight.chosenSport)
         }
         $scope.groupChosen = function() {
-            console.log("Group Chosen");
+            //console.log("Group Chosen");
         }
         $scope.broadcastChosen = function() {
-            console.log("Broadcast Chosen");
+            // console.log("Broadcast Chosen");
         }
         
         $scope.updateSelectables = function (location,sport,group,broadcast) {
@@ -174,7 +174,7 @@ app.controller('bottomRightCGController', ['$scope', 'socket', '$http', 'localSt
                             locations.sort();
                             locations.unshift("All");
                             $scope.bottomRight.locations = locations;
-                            console.log("Loading Locations");
+                            // console.log("Loading Locations");
                         }
 				   	    if(!$scope.bottomRight.chosenLocation){
 				   	        $scope.bottomRight.chosenLocation = "All";
@@ -201,7 +201,7 @@ app.controller('bottomRightCGController', ['$scope', 'socket', '$http', 'localSt
                             sports.sort();
                             sports.unshift("All");
                             $scope.bottomRight.sports = sports;
-                            console.log("Loading Sports");
+                            // console.log("Loading Sports");
                         }
                         if(!$scope.bottomRight.chosenSport){
                              $scope.bottomRight.chosenSport = "All";
@@ -243,7 +243,7 @@ app.controller('bottomRightCGController', ['$scope', 'socket', '$http', 'localSt
                         groups.unshift("All");
                         $scope.bottomRight.groups = groups;
                         $scope.bottomRight.chosenGroup = "All";
-                        console.log("Loading Groups");
+                        // console.log("Loading Groups");
                         var broadcasts = Array(); 
                         for(var i = 0; i < $scope.bottomRight.livebottomRight.length; i++){
                             if(broadcasts.indexOf($scope.bottomRight.livebottomRight[i].broadcast) == -1){
@@ -264,11 +264,15 @@ app.controller('bottomRightCGController', ['$scope', 'socket', '$http', 'localSt
 
 app.controller('bottomLeftCGController', ['$scope', 'socket', 'localStorageService',
     function($scope, socket, localStorageService){
+        
         // Grab current moments
         socket.emit("pleaseSendMoments");
         
         socket.on("bottomLeft", function (msg) {
             $scope.bottomLeft = msg;
+            if(msg.grabThisMany == undefined){
+                $scope.bottomLeft.grabThisMany = 10;
+            }
         });
 
         $scope.$watch('bottomLeft', function() {
@@ -279,18 +283,14 @@ app.controller('bottomLeftCGController', ['$scope', 'socket', 'localStorageServi
             }
         }, true);
         
-        socket.on("bottomLeft", function (msg) {
-            $scope.bottomLeft = msg;
-        });
-        
         function getBottomLeftData() {
             socket.emit("bottomLeft:get");
         }   
              
         socket.on('momentsUpdated', function(msg){
-          $scope.moments = msg;
-          console.log('Moments have been updated');
-          console.log($scope.moments);
+            $scope.moments = msg;
+            // console.log('Moments have been updated');
+            console.log($scope.moments);
         });
 
     }

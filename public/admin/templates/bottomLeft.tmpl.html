@@ -1,47 +1,54 @@
 <div class="ui form segment">
     <h2>Bottom Left</h2>
 
+    <div class="ui grid center aligned">
+        <div class="four wide column">
+            <h3>Max moments</h3>
+            <h1 style="margin-top: 0px !important;">{{bottomLeft.grabThisMany}}</h1>
+            <div class="ui icon buttons">
+                <button class="ui green button" ng-click="bottomLeft.grabThisMany = bottomLeft.grabThisMany + 1;">
+                    <i class="plus icon"></i>
+                </button>
+                <button class="ui red button" ng-click="bottomLeft.grabThisMany = bottomLeft.grabThisMany - 1;" ng-disabled="bottomLeft.grabThisMany == 1">
+                    <i class="minus icon"></i>
+                </button>
+            </div>
+            <br>
+            <br>
+            <div class="ui icon buttons">
+                <button class="ui red button" ng-click="bottomLeft.grabThisMany = 10">
+                    <i class="ban icon"></i>Reset
+                </button>
+            </div>
+        </div>
+        <div class="eight wide column">
+            <h3>Yo, put this thing up!</h3>
+            <input  type="text" placeholder="Header" ng-model="bottomLeft.overrideHeader">
+            <br /><br />
+            <input  type="text" placeholder="Two lines of text" ng-model="bottomLeft.overrideText">
+            <br /><br />
+             <checkbox ng-model="football.showpost" style="margin-right:10px;" size="large" type="toggle">Override with above content</checkbox>
+        </div>
+    </div>
 </div>	
 
-<div class="ui segment">
-<p>
-In this one I'm planning to show all the recent moments (the user will select the number) and then offer the option to hide certain ones, manually force one on and the option to toggle the switching settings.
-</p><p>
-I'll also allow them to tick boxes as to which type of moments to show, and offer the option to select only moments which are about a particular sport. 
-</p><p>
-Might even allow them to put in a custom one.
-</p><p>
-By default it'll just cycle through the last 10 live moments.
-</p>
-</div>
 
-<div class="ui segment" ng-repeat="moment in $scope.moments">
-  <div class="ui grid">
-    <div class="tweleve wide column">
-      <h2 class="left aligned ui header">
-          <i class="list layout icon"></i>
-          <div class="content">
-              {{moment.type}}
-              <div class="sub header">{{moment.text}}</div>
-          </div>
-        </h2>
+<div class="ui segment" ng-repeat="moment in moments.rows">
+    <div class="ui grid">
+        <div class="left aligned ui ten wide column">
+            <h2 class="left aligned ui header">{{moment.type}}
+                <span style="font-size: 12pt;"> {{moment.updated_at | date : "short"}} </span>
+            </h2>
+            <div class="sub header">{{moment.text}}</div>
+            
+        </div>
+        <div class="right aligned ui six wide column">
+            <div class="ui small buttons">
+                <div class="ui positive button" ng-click="show('left', third)" >Left</div>
+            </div>
+            <div class="ui icon red small button">
+                <i class="delete icon" ng-click='remove($index)'></i>
+            </div>
+        </div>
     </div>
-
-    <div class="two wide column">
-      
-    </div>
-
-    <div class="two wide column">
-
-    </div>
-
-    <div class="right aligned six wide column">
-      <div class="ui small buttons">
-        <div class="ui positive button" ng-click="show('left', third)" >Left</div>
-      </div>
-      <div class="ui icon red small button">
-        <i class="delete icon" ng-click='remove($index)'></i>
-      </div>
-    </div>
-  </div>
 </div>

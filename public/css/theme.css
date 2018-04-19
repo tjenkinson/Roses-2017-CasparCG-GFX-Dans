@@ -310,6 +310,10 @@ strong {
     margin-left: 12px;   
 }
 
+#tickerBox .tickerHeader:empty {
+    display: none;
+}
+
 #tickerBox .tickerText1, #tickerBox .tickerText2  {
     color: white;
     font-size: 24px;

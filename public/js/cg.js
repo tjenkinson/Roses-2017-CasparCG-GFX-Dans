@@ -171,9 +171,14 @@ app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
 // Bottom Left Moments
 app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
     function($scope, $interval, $http, socket, $sce){
-        $scope.moments = {"moments":[]};
-        $scope.momentsCheckTickInterval = 30000;
-        $scope.momentsSwapTickInterval = 6000;
+        
+        if($scope.moments == undefined){
+            $scope.moments = {"rows":[]};
+        } else {
+            $scope.moments.rows  = [];
+        }
+        $scope.moments.momentsCheckTickInterval = 30000;
+        $scope.moments.momentsSwapTickInterval = 6000;
         $scope.latestMomentId = "";
         
         socket.on("pleaseSendMoments", function(){
@@ -232,8 +237,13 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
                     }
 
                     $scope.moments.rows = moments.rows;
+                    $scope.moments.momentsFileUpdated = moments.momentsFileUpdated;
                     socket.emit('momentsUpdated', moments);
                     $scope.latestMomentId = moments.rows[0].id;
+                    if($scope.moments.grabThisMany){
+                        console.log($scope.moments.grabThisMany);
+                    }
+                    
                     
                     for(i=0; i<moments.rows.length; i++){
                         // Here we add any moment type specific info
@@ -257,9 +267,9 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
                           
                     }
                 
-                    // console.log($scope.moments);
+                    console.log($scope.moments);
                     rotateMoments();
-                    $interval(rotateMoments, $scope.momentsSwapTickInterval);
+                    $interval(rotateMoments, $scope.moments.momentsSwapTickInterval);
 
                 } else {
                     //console.log("No new Moments");
@@ -296,7 +306,7 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
         fetchMoments();
         
         // Start the timer
-        $interval(fetchMoments, $scope.momentsCheckTickInterval); 
+        $interval(fetchMoments, $scope.moments.momentsCheckTickInterval); 
         
     }
 ]);
@@ -385,7 +395,7 @@ app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
                         
                         var timetableInfo = timetable.data[timetableIndex];
                         
-                        var iScoreString = timetableInfo.team.sport.title + " " + timetableInfo.team.title + ": " + ticker.rows[i].winner + " " + ticker.rows[i].lanc_score + ' - ' +  ticker.rows[i].york_score + "    ";
+                        var iScoreString = timetableInfo.team.sport.title + " " + timetableInfo.team.title + ": " + ticker.rows[i].winner + " " + ticker.rows[i].lancs_score + ' - ' +  ticker.rows[i].york_score + '<span style="border-right: 1px solid white;"></span>';
                         $scope.ticker.tickerText =  $scope.ticker.tickerText + iScoreString;
                         
                     }
