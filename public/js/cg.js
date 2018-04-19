@@ -373,15 +373,17 @@ app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
                         buildArray["lancs_score"] = response.data[i].lancs_score;
                         buildArray["york_score"] = response.data[i].york_score;
                         if(response.data[i].winner == "L"){
-                            response.data[i].winner = "Lancs Win";
+                            response.data[i].winner = '<span class="teamLancsInverse">Lancs</span>';
                         } else if (response.data[i].winner == "Y") {
-                            response.data[i].winner = "York Win";
+                            response.data[i].winner = '<span class="teamYorkInverse">York</span>';
                         } else {
                             // Leave it be.
                         }
                         buildArray["winner"] = response.data[i].winner;
                         buildArray["timetable_entry_id"] = response.data[i].timetable_entry_id;
                         buildArray["confirmed"] = response.data[i].confirmed;
+                        var gamePoints = parseInt(response.data[i].lancs_points) + parseInt(response.data[i].york_points);
+                        buildArray["points"] = gamePoints;
                         ticker.rows.push(buildArray);
                     }
 
@@ -389,17 +391,25 @@ app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
                     socket.emit('tickerUpdated', ticker);
                     
                     $scope.ticker.tickerText = "";
+                    
                     for(i=0; i<2; i++){
 
                         var timetableIndex = timetable.data.findIndex(function(element){ return element.id == ticker.rows[i].timetable_entry_id});
                         
                         var timetableInfo = timetable.data[timetableIndex];
                         
-                        var iScoreString = timetableInfo.team.sport.title + " " + timetableInfo.team.title + ": " + ticker.rows[i].winner + " " + ticker.rows[i].lancs_score + ' - ' +  ticker.rows[i].york_score + '<span style="border-right: 1px solid white;"></span>';
-                        $scope.ticker.tickerText =  $scope.ticker.tickerText + iScoreString;
+                        if(i == 0){
+                            borderThing = "";
+                        } else {
+                            borderThing = '<span style="border-right: 3px solid white; margin-right: 12px; padding-right: 12px;"></span>';
+                        }
+                        
+                        var iScoreString = borderThing + timetableInfo.team.sport.title + " " + timetableInfo.team.title + ticker.rows[i].winner + " " + ticker.rows[i].lancs_score + '-' +  ticker.rows[i].york_score + " (" + ticker.rows[i].points + "pts)";
+                        
+                        $scope.ticker.tickerText =  $sce.trustAsHtml($scope.ticker.tickerText + iScoreString);
                         
                     }
-                
+
                     $scope.ticker.tickerHeader = "Latest Scores";
 
                     // $scope.currentMomentId = 9816;

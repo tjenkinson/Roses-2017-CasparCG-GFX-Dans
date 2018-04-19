@@ -300,6 +300,9 @@ app.controller('tickerCGController', ['$scope', 'socket',
     function($scope, socket){
         socket.on("ticker", function (msg) {
             $scope.ticker = msg;
+            if(msg.overrideHeader == undefined){
+                $scope.ticker.overrideHeader = "Latest Scores";
+            }
         });
 
         $scope.$watch('ticker', function() {

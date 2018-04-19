@@ -117,12 +117,30 @@ strong {
     font-weight: bold;
 }
 
+/* Useful for adding as spans */
 .teamLancs {
     color: #b5121b;
 }
 
 .teamYork {
     color: #fcaf17;
+}
+
+.teamLancsInverse {
+    background-color: #b5121b;
+    color: white;
+}
+
+.teamYorkInverse {
+    background-color: #fcaf17;
+    color: white;
+}
+
+.teamLancsInverse, .teamYorkInverse {
+    margin-left: 6px;
+    margin-right; 6px;
+    padding-left: 6px;
+    padding-right: 6px;
 }
 /**************************************************/
 /*              [Top Right Box]                   */

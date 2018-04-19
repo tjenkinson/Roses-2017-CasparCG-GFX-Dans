@@ -12,18 +12,18 @@
   </head>
   <body ng-controller="AppCtrl">
 
-    <header class="ui one column page grid">
+    <header class="ui one column page grid"">
       <div class="column" id="brand">
         <div class="ui three column grid">
           <div class="column">
 
-            <div class="ui large header"><img src="../images/roses2017logo.png" /> GFX Controller</div>
+            <div class="ui large header"><img src="../images/roses.png" /> Live Sports News Controller</div>
           </div>
         </div>
       </div>
     </header>
 
-    <div class="ui page grid">
+    <div class="ui page grid" style="margin-top: 0px;">
       <aside class="ui four wide column">
         <div class="ui fluid large vertical pointing menu red">
           <a ng-repeat="section in menu" class="item" ng-href="#{{section.url}}" ng-class="{active:isActive(section.url)}" >

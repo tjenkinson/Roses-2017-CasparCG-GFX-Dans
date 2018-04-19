@@ -75,11 +75,11 @@
             <div id="tickerBox">
                 <div class="tickerText1">                           
                     <span class="tickerHeader">{{ticker.tickerHeader}}</span>
-                    {{ticker.tickerText}}
+                    <span ng-bind-html="ticker.tickerText"></span>
                 </div>
                  <div class="tickerText2">                           
                     <span class="tickerHeader">{{ticker.tickerHeader}}</span>
-                    {{ticker.tickerText}}
+                    <span ng-bind-html="ticker.tickerText"></span>
                 </div>
             </div>
             

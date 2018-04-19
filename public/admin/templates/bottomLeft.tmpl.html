@@ -1,5 +1,5 @@
 <div class="ui form segment">
-    <h2>Bottom Left</h2>
+    <h2>Moments - Bottom Left</h2>
 
     <div class="ui grid center aligned">
         <div class="four wide column">
@@ -27,7 +27,7 @@
             <br /><br />
             <input  type="text" placeholder="Two lines of text" ng-model="bottomLeft.overrideText">
             <br /><br />
-             <checkbox ng-model="football.showpost" style="margin-right:10px;" size="large" type="toggle">Override with above content</checkbox>
+             <checkbox ng-model="bottomLeft.momentOverride" style="margin-right:10px;" size="large" type="toggle">Override with above content</checkbox>
         </div>
     </div>
 </div>	
@@ -44,10 +44,10 @@
         </div>
         <div class="right aligned ui six wide column">
             <div class="ui small buttons">
-                <div class="ui positive button" ng-click="show('left', third)" >Left</div>
+                <div class="ui positive button" ng-click="show('left', third)" >Force This On</div>
             </div>
             <div class="ui icon red small button">
-                <i class="delete icon" ng-click='remove($index)'></i>
+                Don't Show This<i class="delete icon" ng-click='remove($index)'></i>
             </div>
         </div>
     </div>

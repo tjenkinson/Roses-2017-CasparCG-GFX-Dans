@@ -2,5 +2,13 @@
   <h2>Ticker</h2>
 
     <div class="ui divider"></div>
-    Unsure what controls we'll offer to the ticker, probably... none?
+   <div class="ui grid center aligned">
+        <div class="four wide column">
+            <checkbox ng-model="ticker.unconfirmedFixtures" style="margin-right:10px;" size="large" type="toggle">Disallow unconfirmed fixtures</checkbox>
+        </div>
+        <div class="four wide column">
+            <h3>Breaking News Term</h3>
+            <input type="text" placeholder="Header" ng-model="ticker.overrideHeader">
+        </div>
+    </div>
 </div>
