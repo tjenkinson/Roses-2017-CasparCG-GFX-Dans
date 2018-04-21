@@ -6,10 +6,9 @@ var app = express();
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 
-var bug = {livetext: "Live", locationtext: ''};
 var topRight = {};
 var bottomRight = {};
-var bottomLeft = {};
+var bottomLeft = {grabThisMany: 10};
 var ticker = {};
 
 //Clock Functions
@@ -72,7 +71,7 @@ io.on('connection', function(socket) {
 	});
 
     socket.on("bottomLeft:get", function(msg) {
-		io.sockets.emit("bottomLeft", msg);
+		io.sockets.emit("bottomLeft", bottomLeft);
 	});
 
 	socket.on("momentsUpdated", function(msg){
@@ -113,6 +112,6 @@ io.on('connection', function(socket) {
 //Serve the puplic dir
 app.use(express.static(__dirname + "/public"));
 
+
 server.listen(3001);
 console.log("Now listening on port 3001. Go to http://127.0.0.1:3001/admin to control")
-console.log("run 'play 1-1 [html] http://127.0.0.1:3001/' in CasparCG to start the graphics")
