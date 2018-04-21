@@ -190,7 +190,8 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
         });
         
         socket.on("bottomLeft", function (msg) {
-            $scope.bottomLeft = msg;       
+            $scope.bottomLeft = msg; 
+            //console.log(msg);      
         });
         
         var fetchMoments = function () {
@@ -241,7 +242,7 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
                     socket.emit('momentsUpdated', moments);
                     $scope.latestMomentId = moments.rows[0].id;
                     if($scope.moments.grabThisMany){
-                        console.log($scope.moments.grabThisMany);
+                        //console.log($scope.moments.grabThisMany);
                     }
                     
                     
@@ -267,7 +268,7 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
                           
                     }
                 
-                    console.log($scope.moments);
+                    //console.log($scope.moments);
                     rotateMoments();
                     $interval(rotateMoments, $scope.moments.momentsSwapTickInterval);
 

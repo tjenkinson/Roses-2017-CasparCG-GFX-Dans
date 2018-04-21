@@ -278,6 +278,7 @@ app.controller('bottomLeftCGController', ['$scope', 'socket', 'localStorageServi
         $scope.$watch('bottomLeft', function() {
             if ($scope.bottomLeft) {
                 socket.emit("bottomLeft", $scope.bottomLeft);
+                // console.log($scope.bottomLeft);
             } else {
                 getBottomLeftData();
             }
@@ -290,7 +291,7 @@ app.controller('bottomLeftCGController', ['$scope', 'socket', 'localStorageServi
         socket.on('momentsUpdated', function(msg){
             $scope.moments = msg;
             // console.log('Moments have been updated');
-            console.log($scope.moments);
+            // console.log($scope.moments);
         });
 
     }
@@ -302,6 +303,9 @@ app.controller('tickerCGController', ['$scope', 'socket',
             $scope.ticker = msg;
             if(msg.overrideHeader == undefined){
                 $scope.ticker.overrideHeader = "Latest Scores";
+            }
+            if(msg.grabThisMany == undefined){
+                $scope.ticker.grabThisMany = 10;
             }
         });
 

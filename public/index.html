@@ -57,7 +57,23 @@
         
         <div ng-controller="bottomLeftCtrl">         
             
-            <div class="animate-repeat" ng-repeat="moment in moments.rows | filter: { id: currentMomentId }"> 
+            <div ng-show="bottomLeft.momentOverride"> 
+                <div id="bottomLeftBox">   
+                    <div class="header">                 
+                        <h1>{{bottomLeft.overrideHeader}}</h1>
+                    </div>
+                </div>
+                <div id="bottomCenterBox">
+                    <div class="description">                     
+                        <h1>{{bottomLeft.overrideText}}</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div ng-controller="bottomLeftCtrl">         
+            
+            <div class="animate-repeat" ng-hide="bottomLeft.momentOverride" ng-repeat="moment in moments.rows | filter: { id: currentMomentId }"> 
                 <div id="bottomLeftBox">   
                     <div class="header">                 
                         <h1>{{moment.header}}</h1>

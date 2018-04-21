@@ -10,5 +10,24 @@
             <h3>Breaking News Term</h3>
             <input type="text" placeholder="Header" ng-model="ticker.overrideHeader">
         </div>
+        <div class="four wide column">
+            <h3>Number of Scores</h3>
+            <h1 style="margin-top: 0px !important;">{{ticker.grabThisMany}}</h1>
+            <div class="ui icon buttons">
+                <button class="ui green button" ng-click="ticker.grabThisMany = ticker.grabThisMany + 1;">
+                    <i class="plus icon"></i>
+                </button>
+                <button class="ui red button" ng-click="ticker.grabThisMany = ticker.grabThisMany - 1;" ng-disabled="ticker.grabThisMany == 1">
+                    <i class="minus icon"></i>
+                </button>
+            </div>
+            <br>
+            <br>
+            <div class="ui icon buttons">
+                <button class="ui red button" ng-click="ticker.grabThisMany = 10">
+                    <i class="ban icon"></i>Reset
+                </button>
+            </div>
+        </div>
     </div>
 </div>
