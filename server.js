@@ -8,7 +8,7 @@ var io = require('socket.io').listen(server);
 
 var topRight = {};
 var bottomRight = {};
-var bottomLeft = {grabThisMany: 10};
+var bottomLeft = {grabThisMany: 10, showOverride: false};
 var ticker = {};
 
 //Clock Functions
@@ -72,6 +72,10 @@ io.on('connection', function(socket) {
 
     socket.on("bottomLeft:get", function(msg) {
 		io.sockets.emit("bottomLeft", bottomLeft);
+	});
+
+	socket.on("bottomLeftOverride", function(msg) {
+		io.sockets.emit("bottomLeftOverride", msg);
 	});
 
 	socket.on("momentsUpdated", function(msg){

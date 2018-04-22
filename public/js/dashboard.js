@@ -294,6 +294,17 @@ app.controller('bottomLeftCGController', ['$scope', 'socket', 'localStorageServi
             // console.log($scope.moments);
         });
 
+        $scope.show = function(momentid) {
+            socket.emit("bottomLeftOverride", momentid);
+            console.log(momentid);
+        };
+
+        $scope.hideOverridden = function(){
+            $scope.bottomLeft.momentOverride = false;
+            socket.emit("bottomLeftOverride", "hide");
+            console.log("Stopping Override")
+        }
+
     }
 ]);
 

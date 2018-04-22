@@ -171,7 +171,10 @@ app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
 // Bottom Left Moments
 app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
     function($scope, $interval, $http, socket, $sce){
-        
+        if($scope.bottomLeft == undefined){
+            $scope.bottomLeft = {momentOverride: false, overrideHeader: "", overrideText:""};
+        }
+
         if($scope.moments == undefined){
             $scope.moments = {"rows":[]};
         } else {
@@ -192,6 +195,23 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
         socket.on("bottomLeft", function (msg) {
             $scope.bottomLeft = msg; 
             //console.log(msg);      
+        });
+
+        socket.on("bottomLeftOverride", function (momentid) {
+            if(momentid == "hide"){
+                $scope.bottomLeft.momentOverride = false;
+                console.log("Stopping Override")
+            } else {
+                $scope.bottomLeft.momentOverride = true;
+                $scope.bottomLeft.overrideid = momentid;
+                for(i=0; i < $scope.moments.rows.length; i++){
+                    if($scope.moments.rows[i].id == momentid){
+                        $scope.bottomLeft.overrideHeader = $scope.moments.rows[i].header;
+                        $scope.bottomLeft.overrideText = $scope.moments.rows[i].content;
+                        break;
+                    }
+                }
+            }
         });
         
         var fetchMoments = function () {

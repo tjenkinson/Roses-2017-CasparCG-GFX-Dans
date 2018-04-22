@@ -42,13 +42,20 @@
             <div class="sub header">{{moment.text}}</div>
             
         </div>
-        <div class="right aligned ui six wide column">
+        <div class="center aligned ui six wide column">
             <div class="ui small buttons">
-                <div class="ui positive button" ng-click="show('left', third)" >Force This On</div>
+                <div class="ui positive button" ng-click="show(moment.id)" >Force This On</div>
             </div>
+            <div class="ui icon buttons">
+                <button class="ui orange button" ng-click="hideOverridden()">
+                    Stop Forced<i class="delete icon"></i>
+                </button>
+            </div>
+            <br /><br />
             <div class="ui icon red small button">
                 Don't Show This<i class="delete icon" ng-click='remove($index)'></i>
             </div>
+
         </div>
     </div>
 </div>
