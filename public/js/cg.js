@@ -254,7 +254,11 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
                         buildArray["type"] = response.data[i].live_moment_type.name;
                         buildArray["author"] = response.data[i].author;
                         buildArray["team_name"] = response.data[i].team_name;
-                        moments.rows.push(buildArray);
+                        if(buildArray["type"] !== "General Commentary"){
+                            moments.rows.push(buildArray);
+                        } else {
+
+                        }
                     }
 
                     $scope.moments.rows = moments.rows;
@@ -280,6 +284,9 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
                         } else  if (moments.rows[i].type == "Score Update"){
                             var team = moments.rows[i].text.substr(0, moments.rows[i].text.indexOf(',')); 
                             $scope.moments.rows[i].header = team;
+                            $scope.moments.rows[i].content = $sce.trustAsHtml(moments.rows[i].text);
+                        } else if (moments.rows[i].type == "Significant Moment"){
+                            $scope.moments.rows[i].header = moments.rows[i].type;
                             $scope.moments.rows[i].content = $sce.trustAsHtml(moments.rows[i].text);
                         } else {
                             $scope.moments.rows[i].header = moments.rows[i].type;
