@@ -269,7 +269,7 @@ app.controller('bottomLeftCGController', ['$scope', 'socket', 'localStorageServi
         socket.emit("pleaseSendMoments");
         
         socket.on("bottomLeft", function (msg) {
-            $scope.bottomLeft = msg;
+            // $scope.bottomLeft = msg;
             if(msg.grabThisMany == undefined){
                 $scope.bottomLeft.grabThisMany = 10;
             }
@@ -319,23 +319,23 @@ app.controller('bottomLeftCGController', ['$scope', 'socket', 'localStorageServi
     }
 ]);
 
-app.controller('tickerCGController', ['$scope', 'socket',
-    function($scope, socket){
-        socket.on("ticker", function (msg) {
-            $scope.ticker = msg;
-            if(msg.overrideHeader == undefined){
-                $scope.ticker.overrideHeader = "Latest Scores";
-            }
-            if(msg.grabThisMany == undefined){
-                $scope.ticker.grabThisMany = 10;
-            }
-        });
+app.controller('tickerCGController', ['$scope', 'socket', 'localStorageService',
+    function($scope, socket, localStorageService){
+        
+        var storedSettings = localStorageService.get('ticker_settings');
+
+        if(storedSettings === null) {
+            $scope.ticker = {overrideHeader: "Latest Scores", grabThisMany: 10, unconfirmedFixtures: false }; 
+        } else {
+            $scope.ticker = storedSettings;
+        }
 
         $scope.setSettings = function() {
             socket.emit("ticker", $scope.ticker);
-            console.log($scope.ticker);
+            localStorageService.set('ticker_settings', $scope.ticker);
         };
 
+        // Watch for changes to the ticker scope
         $scope.$watch('ticker', function() {
             if ($scope.ticker) {
                 // socket.emit("ticker", $scope.ticker);  // No autoupdating, thanks

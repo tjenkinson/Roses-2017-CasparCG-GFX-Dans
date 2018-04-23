@@ -231,12 +231,12 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
         });
         
         var fetchMoments = function () {
-          console.log("Fetching Moments");
+            console.log("Fetching Moments");
             var config = {headers:  {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-            }
-          };
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+            };
 
           $http.get('data/feed_example.json', config).then(function(response) {
               if(isNaN(response.data[0].id) || isNaN(response.data[0].id)){
