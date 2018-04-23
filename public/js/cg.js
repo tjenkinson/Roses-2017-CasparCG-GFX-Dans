@@ -1,5 +1,6 @@
 var app = angular.module('cgApp', ['ngAnimate', 'socket-io']);
 
+// Top Right General Info
 app.controller('topRightCtrl', ['$scope', '$timeout', 'socket',
     function($scope, $timeout, socket){
         $scope.tickInterval = 1000; //ms
@@ -166,23 +167,14 @@ app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
     }    
 ]);
 
-
 // Bottom Left Moments
 app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
     function($scope, $interval, $http, socket, $sce){
-        if($scope.bottomLeft == undefined){
-            $scope.bottomLeft = { momentOverride: false, overrideHeader: "", overrideText:"", ignoreMoments: [] };        
-        }
-
-        if($scope.moments == undefined){
-            $scope.moments = {"rows":[]};
-            $scope.moments.momentsCheckTickInterval = 63000; // Allow this to be set
-            $scope.moments.momentsSwapTickInterval = 6000;  // Allow this to be set
-            $scope.latestMomentId = "";
-        } else {
-            $scope.moments.rows  = [];
-            $scope.latestMomentId = "";
-        }
+        var momentsCheckTickInterval = 63000; // Allow this to be set
+        var momentsSwapTickInterval = 6000;  // Allow this to be set 
+        $scope.bottomLeft = { momentOverride: false, overrideHeader: "", overrideText:"", ignoreMoments: [] };        
+        $scope.moments = {"rows":[]};
+        $scope.latestMomentId = "";
  
         socket.on("pleaseSendMoments", function(){
             if($scope.moments !== undefined){
@@ -202,7 +194,7 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
                     }
                 }
             }
-            // console.log($scope.bottomLeft.ignoreMoments);
+            console.log($scope.bottomLeft.ignoreMoments);
             $scope.fetchMoments();       
         });
 
@@ -218,7 +210,7 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
                 }
             }
             // console.log($scope.bottomLeft.ignoreMoments);  
-            $scope.fetchMoments();    
+
         });
 
         socket.on("bottomLeftOverride", function (momentid) {
@@ -238,7 +230,7 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
             }
         });
         
-        $scope.fetchMoments = function () {
+        var fetchMoments = function () {
           console.log("Fetching Moments");
             var config = {headers:  {
               'Accept': 'application/json',
@@ -271,26 +263,40 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
                         var buildArray = {};  
                         buildArray["id"] = response.data[i].id;
                         response.data[i].text = response.data[i].text.replace('<Strong>Lancs','<Strong class="teamLancs"> Lancs');
-                        
                         response.data[i].text = response.data[i].text.replace('<Strong>York','<Strong class="teamYork"> York');
                         buildArray["text"] = response.data[i].text
                         buildArray["updated_at"] = response.data[i].updated_at;
                         buildArray["type"] = response.data[i].live_moment_type.name;
                         buildArray["author"] = response.data[i].author;
                         buildArray["team_name"] = response.data[i].team_name;
-                        if(buildArray["type"] !== "General Commentary" && $scope.bottomLeft.ignoreMoments.indexOf(buildArray["id"]) == -1 ){
-                            moments.rows.push(buildArray);
+                        
+                        // Grab Twitter Image
+                        if(response.data[i].picture_file !== ""){
+                            buildArray["picture_file"] = response.data[i].picture_file;
                         } else {
-
+                            buildArray["picture_file"] = "";
                         }
+                        
+                        // If this is to be ignored by user input, then say so
+                        if($scope.bottomLeft.ignoreMoments.indexOf(buildArray["id"]) > -1){
+                            buildArray["ignore"] = $scope.bottomLeft.ignoreMoments.indexOf(buildArray["id"]);
+                        } else {
+                            buildArray["ignore"] = "false";
+                        }
+
+                        // Method for ignoing moments by type 
+                        if(buildArray["type"] !== "General Commentary" ){
+                            moments.rows.push(buildArray);
+                        } 
                     }
+                    
                     $scope.moments.rows = moments.rows;
                     $scope.moments.momentsFileUpdated = moments.momentsFileUpdated;
-                    // socket.emit('momentsUpdated', moments);
+                    console.log($scope.moments)
+                    
+                    socket.emit('momentsUpdated', moments);
+                    
                     $scope.latestMomentId = moments.rows[0].id;
-                    if($scope.moments.grabThisMany){
-                        //console.log($scope.moments.grabThisMany);
-                    }
                     
                     for(i=0; i<moments.rows.length; i++){
                         // Here we add any moment type specific info
@@ -312,13 +318,12 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
                         } else {
                             $scope.moments.rows[i].header = moments.rows[i].type;
                             $scope.moments.rows[i].content = $sce.trustAsHtml(moments.rows[i].text);
-                        }
-                          
+                        }                   
                     }
                 
                     //console.log($scope.moments);
                     if($scope.moments.MomentsAlreadyTicking == undefined){
-                        $interval($scope.rotateMoments, $scope.moments.momentsSwapTickInterval);
+                        $interval(rotateMoments, momentsSwapTickInterval);
                         $scope.moments.MomentsAlreadyTicking = true;
                     } else {
                         // console.log("Already ticking");
@@ -333,8 +338,9 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
             }
           );
         };   
-         
-        $scope.rotateMoments = function(){
+        
+        // Function for rotating moments. Output is a change in $scope.currentMomentId every second.
+        var rotateMoments = function(){
             var currenti = 0;
             if($scope.moments.rows.length > 0){
                 if($scope.currentMomentId  == undefined){
@@ -355,18 +361,19 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
             } 
         }       
         
-        // First fetch if not already there plz
+        // First fetch if moments rows array is empty
         if($scope.moments.rows.length == 0){
-            $scope.fetchMoments();
+            fetchMoments();
         } else {
             // console.log($scope.moments);
         }
-        // Start the timer
-        $interval($scope.fetchMoments, $scope.moments.momentsCheckTickInterval); 
+        // Start the timer for subsiquent grabs.
+        $interval(fetchMoments, momentsCheckTickInterval); 
         
     }
 ]);
 
+// Ticker Things
 app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
     function($scope, $interval, $http, socket, $sce){
         $scope.fixturesLookup = {};

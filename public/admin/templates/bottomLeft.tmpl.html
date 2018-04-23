@@ -53,10 +53,10 @@
             </div>
             <br /><br />
             <div class="ui red small buttons">
-                <div class="ui negative button" ng-click="removeMoment(moment.id)">Remove from list</div>
+                <div class="ui negative button" ng-class="{disableButton: moment.ignore !== 'false'}" ng-click="removeMoment(moment.id)">Remove from list</div>
             </div>
             <div class="ui small buttons">
-                <div class="ui positive button" ng-click="returnMoment(moment.id)">Back to list</div>
+                <div class="ui positive button" ng-class="{disableButton: moment.ignore == 'false'}" ng-click="returnMoment(moment.id)">Back to list</div>
             </div>
         </div>
     </div>

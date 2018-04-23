@@ -265,11 +265,11 @@ app.controller('bottomRightCGController', ['$scope', 'socket', '$http', 'localSt
 app.controller('bottomLeftCGController', ['$scope', 'socket', 'localStorageService',
     function($scope, socket, localStorageService){
         
-        // Grab current moments
-        socket.emit("pleaseSendMoments");
+        // Grab current moments, first time it loads. 
+        // socket.emit("pleaseSendMoments");
         
         socket.on("bottomLeft", function (msg) {
-            // $scope.bottomLeft = msg;
+            $scope.bottomLeft = msg;
             if(msg.grabThisMany == undefined){
                 $scope.bottomLeft.grabThisMany = 10;
             }
@@ -277,6 +277,7 @@ app.controller('bottomLeftCGController', ['$scope', 'socket', 'localStorageServi
 
         $scope.$watch('bottomLeft', function() {
             if ($scope.bottomLeft) {
+                // Automatically do stuff if the scope changes
                 // socket.emit("bottomLeft", $scope.bottomLeft);
                 // console.log($scope.bottomLeft);
             } else {

@@ -142,6 +142,11 @@ strong {
     padding-left: 6px;
     padding-right: 6px;
 }
+
+.disableButton {
+    opacity: 0.65; 
+    cursor: not-allowed;
+}
 /**************************************************/
 /*              [Top Right Box]                   */
 /**************************************************/
