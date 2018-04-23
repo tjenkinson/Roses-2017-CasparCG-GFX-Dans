@@ -458,6 +458,7 @@ app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
                     
                     // Build the ticker text
                     $scope.ticker.tickerText = "";
+                    $scope.ticker.tickerPlainText = "";
                     
                     // If set, set limit to show how many they've asked for
                     if($scope.ticker.grabThisMany < $scope.ticker.rows.length){
@@ -468,15 +469,10 @@ app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
 
                     for(i=0; i<limit; i++){
                         var timetableIndex = timetable.data.findIndex(function(element){ return element.id == ticker.rows[i].timetable_entry_id});                  
-                        var timetableInfo = timetable.data[timetableIndex];                   
-                        if(i == 0){
-                            borderThing = "";
-                        } else {
-                            borderThing = '<span style="border-right: 3px solid white; margin-right: 12px; padding-right: 12px;"></span>';
-                        }
+                        var timetableInfo = timetable.data[timetableIndex];                      
+                        var iScoreString = timetableInfo.team.sport.title + " " + timetableInfo.team.title + ticker.rows[i].winner + " " + ticker.rows[i].lancs_score + '-' +  ticker.rows[i].york_score + " (" + ticker.rows[i].points + "pts)";
                         
-                        var iScoreString = borderThing + timetableInfo.team.sport.title + " " + timetableInfo.team.title + ticker.rows[i].winner + " " + ticker.rows[i].lancs_score + '-' +  ticker.rows[i].york_score + " (" + ticker.rows[i].points + "pts)";
-                        
+                        $scope.ticker.tickerPlainText = $scope.ticker.tickerPlainText + iScoreString
                         $scope.ticker.tickerText =  $sce.trustAsHtml($scope.ticker.tickerText + iScoreString);                       
                     }
 
@@ -485,6 +481,21 @@ app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
                     } else {
                         $scope.ticker.tickerHeader = $scope.ticker.overrideHeader;
                     }
+                    
+                    const { Marquee, loop } = dynamicMarquee;
+                    const $marquee = document.getElementById('marquee');
+                    const marquee = window.m = new Marquee($marquee, { rate: -75 });
+                    const control = loop(marquee, [
+                        () => '<span class="tickerHeader">' + $scope.ticker.tickerHeader + '</span>',
+                        () => $scope.ticker.tickerPlainText,
+                        () => 'This still needs fixing',
+                        ], () => {
+                        const $separator = document.createElement('div');
+                        $separator.innerHTML = '<span style="border-right: 3px solid white; margin-right: 12px; padding-right: 12px;"></span>';
+                        return $separator;
+                    });
+
+
                 } else {
                     // console.log("nothing's changed");
                 }                             
@@ -492,10 +503,10 @@ app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
             }
           );
         };
-                   
+        
         // First fetch plz
         fetchTickerScores();
-        
+
         // Start the timer
         $interval(fetchTickerScores, $scope.tickerCheckTickInterval);
     }

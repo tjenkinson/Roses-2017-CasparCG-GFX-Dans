@@ -89,14 +89,7 @@
       
         <div ng-controller="tickerCtrl">         
             <div id="tickerBox">
-                <div class="tickerText1">                           
-                    <span class="tickerHeader">{{ticker.tickerHeader}}</span>
-                    <span ng-bind-html="ticker.tickerText"></span>
-                </div>
-                 <div class="tickerText2">                           
-                    <span class="tickerHeader">{{ticker.tickerHeader}}</span>
-                    <span ng-bind-html="ticker.tickerText"></span>
-                </div>
+                <div id="marquee"></div>
             </div>
             
             <div id="emptySpace"></div>
@@ -108,6 +101,7 @@
         <script type="text/javascript" src="/js/ng-socket-io.js"></script>
         <script type="text/javascript" src="/js/cg.js"></script>
         <script type="text/javascript" src="/js/jquery.js"></script>
-
+        <script type="text/javascript" src="js/dynamic-marquee.js"></script>
+    
     </body>
 </html>
