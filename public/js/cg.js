@@ -375,7 +375,7 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
 // Ticker Things
 app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
     function($scope, $interval, $http, socket, $sce){      
-        $scope.ticker = {"rows":[], grabThisMany: 10, unconfirmedFixtures: false};
+        $scope.ticker = {"rows":[], grabThisMany: 10, unconfirmedFixtures: true};
         $scope.tickerCheckTickInterval = 10000;
         
         socket.on("ticker", function (msg) {
@@ -447,7 +447,7 @@ app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
                         buildArray["confirmed"] = response.data[i].confirmed;
                         var gamePoints = parseInt(response.data[i].lancs_points) + parseInt(response.data[i].york_points);
                         buildArray["points"] = gamePoints;
-                        if($scope.ticker.unconfirmedFixtures == false && buildArray["confirmed"] == "no"){
+                        if($scope.ticker.unconfirmedFixtures == false && buildArray["confirmed"] == "N"){
                             // Don't add it to the thing
                         } else {
                             ticker.rows.push(buildArray);
@@ -455,7 +455,6 @@ app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
                     }
 
                     $scope.ticker.rows = ticker.rows;
-                    socket.emit('tickerUpdated', ticker);
                     
                     // Build the ticker text
                     $scope.ticker.tickerText = "";
@@ -481,12 +480,11 @@ app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
                         $scope.ticker.tickerText =  $sce.trustAsHtml($scope.ticker.tickerText + iScoreString);                       
                     }
 
-                    if($scope.ticker.tickerHeader == undefined){
+                    if($scope.ticker.overrideHeader == undefined){
                         $scope.ticker.tickerHeader = "Latest Scores";
                     } else {
                         $scope.ticker.tickerHeader = $scope.ticker.overrideHeader;
                     }
-                    console.log($scope.ticker);
                 } else {
                     // console.log("nothing's changed");
                 }                             
