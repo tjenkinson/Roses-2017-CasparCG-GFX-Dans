@@ -266,7 +266,7 @@ app.controller('bottomLeftCGController', ['$scope', 'socket', 'localStorageServi
     function($scope, socket, localStorageService){
         
         // Grab current moments, first time it loads. 
-        // socket.emit("pleaseSendMoments");
+        socket.emit("pleaseSendMoments");
         
         socket.on("bottomLeft", function (msg) {
             $scope.bottomLeft = msg;
