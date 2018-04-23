@@ -47,15 +47,17 @@
                 <div class="ui positive button" ng-click="show(moment.id)" >Force This On</div>
             </div>
             <div class="ui icon buttons">
-                <button class="ui orange button" ng-click="hideOverridden()">
-                    Stop Forced<i class="delete icon"></i>
+                <button class="ui orange button" ng-click="hideOverridden(moment.id)">
+                    Stop Forced
                 </button>
             </div>
             <br /><br />
-            <div class="ui icon red small button">
-                Don't Show This<i class="delete icon" ng-click='remove($index)'></i>
+            <div class="ui red small buttons">
+                <div class="ui negative button" ng-click="removeMoment(moment.id)">Remove from list</div>
             </div>
-
+            <div class="ui small buttons">
+                <div class="ui positive button" ng-click="returnMoment(moment.id)">Back to list</div>
+            </div>
         </div>
     </div>
 </div>

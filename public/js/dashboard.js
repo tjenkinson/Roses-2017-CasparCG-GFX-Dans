@@ -269,7 +269,7 @@ app.controller('bottomLeftCGController', ['$scope', 'socket', 'localStorageServi
         socket.emit("pleaseSendMoments");
         
         socket.on("bottomLeft", function (msg) {
-            $scope.bottomLeft = msg;
+            // $scope.bottomLeft = msg;
             if(msg.grabThisMany == undefined){
                 $scope.bottomLeft.grabThisMany = 10;
             }
@@ -277,7 +277,7 @@ app.controller('bottomLeftCGController', ['$scope', 'socket', 'localStorageServi
 
         $scope.$watch('bottomLeft', function() {
             if ($scope.bottomLeft) {
-                socket.emit("bottomLeft", $scope.bottomLeft);
+                // socket.emit("bottomLeft", $scope.bottomLeft);
                 // console.log($scope.bottomLeft);
             } else {
                 getBottomLeftData();
@@ -305,6 +305,16 @@ app.controller('bottomLeftCGController', ['$scope', 'socket', 'localStorageServi
             console.log("Stopping Override")
         }
 
+        $scope.removeMoment = function(momentid) {
+            socket.emit("bottomLeftRemove", momentid);
+            console.log("Removing " + momentid + " from list");
+        };
+        
+        $scope.returnMoment = function(momentid) {
+            socket.emit("bottomLeftReturn", momentid);
+            console.log("Returning " + momentid + " to list");
+        };
+
     }
 ]);
 
@@ -320,17 +330,18 @@ app.controller('tickerCGController', ['$scope', 'socket',
             }
         });
 
+        $scope.setSettings = function() {
+            socket.emit("ticker", $scope.ticker);
+            console.log($scope.ticker);
+        };
+
         $scope.$watch('ticker', function() {
             if ($scope.ticker) {
-                socket.emit("ticker", $scope.ticker);
+                // socket.emit("ticker", $scope.ticker);  // No autoupdating, thanks
             } else {
                 getTickerData();
             }
         }, true);
-        
-        socket.on("ticker", function (msg) {
-            $scope.ticker = msg;
-        });
         
         function getTickerData() {
             socket.emit("ticker:get");

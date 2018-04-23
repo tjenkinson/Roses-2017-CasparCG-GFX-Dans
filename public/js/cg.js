@@ -161,8 +161,7 @@ app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
         updateFixtures();
         
         // Start the timer to update fixtures
-        $interval(updateFixtures, $scope.fixturesTickInterval);
-        
+        $interval(updateFixtures, $scope.fixturesTickInterval);       
         
     }    
 ]);
@@ -172,35 +171,60 @@ app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
 app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
     function($scope, $interval, $http, socket, $sce){
         if($scope.bottomLeft == undefined){
-            $scope.bottomLeft = {momentOverride: false, overrideHeader: "", overrideText:""};
+            $scope.bottomLeft = { momentOverride: false, overrideHeader: "", overrideText:"", ignoreMoments: [] };        
         }
 
         if($scope.moments == undefined){
             $scope.moments = {"rows":[]};
+            $scope.moments.momentsCheckTickInterval = 63000; // Allow this to be set
+            $scope.moments.momentsSwapTickInterval = 6000;  // Allow this to be set
+            $scope.latestMomentId = "";
         } else {
             $scope.moments.rows  = [];
+            $scope.latestMomentId = "";
         }
-        $scope.moments.momentsCheckTickInterval = 30000;
-        $scope.moments.momentsSwapTickInterval = 6000;
-        $scope.latestMomentId = "";
-        
+ 
         socket.on("pleaseSendMoments", function(){
-            if($scope.moments){
+            if($scope.moments !== undefined){
                 socket.emit('momentsUpdated', $scope.moments);
             } else {
                 socket.emit('momentsUpdated',"No Moments Sorry");
             }
         });
         
-        socket.on("bottomLeft", function (msg) {
-            $scope.bottomLeft = msg; 
-            //console.log(msg);      
+        socket.on("bottomLeftRemove", function (momentid) {
+            if(momentid !== undefined){
+                if($scope.bottomLeft.ignoreMoments == undefined){
+                    $scope.bottomLeft.ignoreMoments = [momentid];
+                } else {
+                    if($scope.bottomLeft.ignoreMoments.indexOf(momentid) == -1 ){
+                        $scope.bottomLeft.ignoreMoments.push(momentid);
+                    }
+                }
+            }
+            // console.log($scope.bottomLeft.ignoreMoments);
+            $scope.fetchMoments();       
+        });
+
+        socket.on("bottomLeftReturn", function (momentid) {
+            if(momentid !== undefined){
+                if($scope.bottomLeft.ignoreMoments == undefined){
+                    $scope.bottomLeft.ignoreMoments = [];
+                } else {
+                    var index = $scope.bottomLeft.ignoreMoments.indexOf(momentid);
+                    if (index > -1) {
+                        $scope.bottomLeft.ignoreMoments.splice(index, 1);
+                    }
+                }
+            }
+            // console.log($scope.bottomLeft.ignoreMoments);  
+            $scope.fetchMoments();    
         });
 
         socket.on("bottomLeftOverride", function (momentid) {
             if(momentid == "hide"){
                 $scope.bottomLeft.momentOverride = false;
-                console.log("Stopping Override")
+                // console.log("Stopping Override");
             } else {
                 $scope.bottomLeft.momentOverride = true;
                 $scope.bottomLeft.overrideid = momentid;
@@ -214,8 +238,9 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
             }
         });
         
-        var fetchMoments = function () {
-          var config = {headers:  {
+        $scope.fetchMoments = function () {
+          console.log("Fetching Moments");
+            var config = {headers:  {
               'Accept': 'application/json',
               'Content-Type': 'application/json',
             }
@@ -227,8 +252,7 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
                 return;
               } else { 
                  
-                 // Sort Array so we're getting the most recent content
-                 
+                 // Sort Array so we're getting the most recent content 
                  response.data.sort(function(a, b){
                     var keyA = new Date(a.updated_at),
                         keyB = new Date(b.updated_at);
@@ -254,21 +278,19 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
                         buildArray["type"] = response.data[i].live_moment_type.name;
                         buildArray["author"] = response.data[i].author;
                         buildArray["team_name"] = response.data[i].team_name;
-                        if(buildArray["type"] !== "General Commentary"){
+                        if(buildArray["type"] !== "General Commentary" && $scope.bottomLeft.ignoreMoments.indexOf(buildArray["id"]) == -1 ){
                             moments.rows.push(buildArray);
                         } else {
 
                         }
                     }
-
                     $scope.moments.rows = moments.rows;
                     $scope.moments.momentsFileUpdated = moments.momentsFileUpdated;
-                    socket.emit('momentsUpdated', moments);
+                    // socket.emit('momentsUpdated', moments);
                     $scope.latestMomentId = moments.rows[0].id;
                     if($scope.moments.grabThisMany){
                         //console.log($scope.moments.grabThisMany);
                     }
-                    
                     
                     for(i=0; i<moments.rows.length; i++){
                         // Here we add any moment type specific info
@@ -285,7 +307,6 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
                             var team = moments.rows[i].text.substr(0, moments.rows[i].text.indexOf(',')); 
                             $scope.moments.rows[i].header = team;
                             $scope.moments.rows[i].content = $sce.trustAsHtml(moments.rows[i].text);
-                        } else if (moments.rows[i].type == "Significant Moment"){
                             $scope.moments.rows[i].header = moments.rows[i].type;
                             $scope.moments.rows[i].content = $sce.trustAsHtml(moments.rows[i].text);
                         } else {
@@ -296,8 +317,12 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
                     }
                 
                     //console.log($scope.moments);
-                    rotateMoments();
-                    $interval(rotateMoments, $scope.moments.momentsSwapTickInterval);
+                    if($scope.moments.MomentsAlreadyTicking == undefined){
+                        $interval($scope.rotateMoments, $scope.moments.momentsSwapTickInterval);
+                        $scope.moments.MomentsAlreadyTicking = true;
+                    } else {
+                        // console.log("Already ticking");
+                    }
 
                 } else {
                     //console.log("No new Moments");
@@ -307,10 +332,10 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
         
             }
           );
-        };
+        };   
          
-         
-        var rotateMoments = function(){
+        $scope.rotateMoments = function(){
+            var currenti = 0;
             if($scope.moments.rows.length > 0){
                 if($scope.currentMomentId  == undefined){
                     $scope.currentMomentId = $scope.moments.rows[0].id;
@@ -325,16 +350,19 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
                         }
                     }
                     $scope.currentMomentId = $scope.moments.rows[currenti].id;
+                    // console.log($scope.currentMomentId);  
                 }
             } 
-            // console.log($scope.currentMomentId);  
         }       
         
-        // First fetch plz
-        fetchMoments();
-        
+        // First fetch if not already there plz
+        if($scope.moments.rows.length == 0){
+            $scope.fetchMoments();
+        } else {
+            // console.log($scope.moments);
+        }
         // Start the timer
-        $interval(fetchMoments, $scope.moments.momentsCheckTickInterval); 
+        $interval($scope.fetchMoments, $scope.moments.momentsCheckTickInterval); 
         
     }
 ]);
@@ -438,8 +466,11 @@ app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
                         
                     }
 
-                    $scope.ticker.tickerHeader = "Latest Scores";
-
+                    if($scope.ticker.tickerHeader == undefined){
+                        $scope.ticker.tickerHeader = "Latest Scores";
+                    } else {
+                        $scope.ticker.tickerHeader = $scope.ticker.overrideHeader;
+                    }
                     // $scope.currentMomentId = 9816;
                 } else {
                     // console.log("nothing's changed");
@@ -450,8 +481,7 @@ app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
             }
           );
         };
-        
-            
+                   
         // First fetch plz
         fetchTickerScores();
         
