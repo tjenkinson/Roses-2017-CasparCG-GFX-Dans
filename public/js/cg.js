@@ -230,8 +230,8 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
             }
         });
         
-        var fetchMoments = function () {
-            console.log("Fetching Moments");
+        function fetchMoments() {
+            // console.log("Fetching Moments");
             var config = {headers:  {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
@@ -292,7 +292,6 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
                     
                     $scope.moments.rows = moments.rows;
                     $scope.moments.momentsFileUpdated = moments.momentsFileUpdated;
-                    console.log($scope.moments)
                     
                     socket.emit('momentsUpdated', moments);
                     
@@ -340,7 +339,7 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
         };   
         
         // Function for rotating moments. Output is a change in $scope.currentMomentId every second.
-        var rotateMoments = function(){
+        function rotateMoments(){
             var currenti = 0;
             if($scope.moments.rows.length > 0){
                 if($scope.currentMomentId  == undefined){
@@ -375,14 +374,15 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
 
 // Ticker Things
 app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
-    function($scope, $interval, $http, socket, $sce){
-        $scope.fixturesLookup = {};
-        
-        $scope.ticker = {"ticker":[]};
+    function($scope, $interval, $http, socket, $sce){      
+        $scope.ticker = {"rows":[], grabThisMany: 10, unconfirmedFixtures: false};
         $scope.tickerCheckTickInterval = 10000;
         
         socket.on("ticker", function (msg) {
-            $scope.ticker = msg;
+            $scope.ticker.grabThisMany = msg.grabThisMany;
+            $scope.ticker.overrideHeader = msg.overrideHeader;
+            $scope.ticker.unconfirmedFixtures = msg.unconfirmedFixtures;
+            fetchTickerScores();
         });
         
         $scope.$watch('ticker', function() {
@@ -447,20 +447,29 @@ app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
                         buildArray["confirmed"] = response.data[i].confirmed;
                         var gamePoints = parseInt(response.data[i].lancs_points) + parseInt(response.data[i].york_points);
                         buildArray["points"] = gamePoints;
-                        ticker.rows.push(buildArray);
+                        if($scope.ticker.unconfirmedFixtures == false && buildArray["confirmed"] == "no"){
+                            // Don't add it to the thing
+                        } else {
+                            ticker.rows.push(buildArray);
+                        }
                     }
 
                     $scope.ticker.rows = ticker.rows;
                     socket.emit('tickerUpdated', ticker);
                     
+                    // Build the ticker text
                     $scope.ticker.tickerText = "";
                     
-                    for(i=0; i<2; i++){
+                    // If set, set limit to show how many they've asked for
+                    if($scope.ticker.grabThisMany < $scope.ticker.rows.length){
+                        var limit = $scope.ticker.grabThisMany;
+                    } else {
+                        var limit = $scope.ticker.rows.length;
+                    }
 
-                        var timetableIndex = timetable.data.findIndex(function(element){ return element.id == ticker.rows[i].timetable_entry_id});
-                        
-                        var timetableInfo = timetable.data[timetableIndex];
-                        
+                    for(i=0; i<limit; i++){
+                        var timetableIndex = timetable.data.findIndex(function(element){ return element.id == ticker.rows[i].timetable_entry_id});                  
+                        var timetableInfo = timetable.data[timetableIndex];                   
                         if(i == 0){
                             borderThing = "";
                         } else {
@@ -469,8 +478,7 @@ app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
                         
                         var iScoreString = borderThing + timetableInfo.team.sport.title + " " + timetableInfo.team.title + ticker.rows[i].winner + " " + ticker.rows[i].lancs_score + '-' +  ticker.rows[i].york_score + " (" + ticker.rows[i].points + "pts)";
                         
-                        $scope.ticker.tickerText =  $sce.trustAsHtml($scope.ticker.tickerText + iScoreString);
-                        
+                        $scope.ticker.tickerText =  $sce.trustAsHtml($scope.ticker.tickerText + iScoreString);                       
                     }
 
                     if($scope.ticker.tickerHeader == undefined){
@@ -478,13 +486,11 @@ app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
                     } else {
                         $scope.ticker.tickerHeader = $scope.ticker.overrideHeader;
                     }
-                    // $scope.currentMomentId = 9816;
+                    console.log($scope.ticker);
                 } else {
                     // console.log("nothing's changed");
-                }               
-               
+                }                             
               }              
-        
             }
           );
         };
