@@ -500,9 +500,9 @@ app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
                     function updateMarqueeStuff(){
                         updateArray = [() => '<span class="tickerHeader">' + $scope.ticker.tickerHeader + '</span>'];
                         tickerElementsArray.forEach(function(element){
-                            updateArray.push('() => ' + element.text);
+                            updateArray.push(function() { return element.text; });
                         });
-                        console.log(updateArray);
+                        // console.log(updateArray);
                         control.update(updateArray);
                     }
                     
@@ -522,6 +522,7 @@ app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
           );
         };
         
+        var control;
         function initialMarqueeStuff(){
             const { Marquee, loop } = dynamicMarquee;
             const $marquee = document.getElementById('marquee');
@@ -533,7 +534,7 @@ app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
             if (marquee.isWaitingForItem()) {
                 marquee.appendItem($header);
             }
-            const control = loop(marquee, [
+            control = loop(marquee, [
                 () => 'Add some good content in here'
                 ], () => {
                 const $separator = document.createElement('div');
