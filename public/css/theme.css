@@ -191,6 +191,10 @@ strong {
     padding-bottom: 12px;
 }
 
+#bottomRightBox .rowContainer{
+    position: relative;
+}
+
 #bottomRightBox .row {
     margin-left: 6px;
     margin-right: 6px;
@@ -199,7 +203,6 @@ strong {
     background-color: #BC204B;
     
 }
-
 
 #bottomRightBox .fixtureGroup {
     width: 160px;
@@ -228,6 +231,11 @@ strong {
 
 #bottomRightBox .fixturePoints,  #bottomRightBox .fixtureDay {
     display: none; /* This will be changed dynamically in index.html */
+}
+
+.bottomRightImage {
+    top: 0px;
+    position: absolute;
 }
 
 

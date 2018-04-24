@@ -108,6 +108,22 @@ io.on('connection', function(socket) {
 		io.sockets.emit("bottomRight", bottomRight);
 	});
 
+	socket.on("bottomRight:applyimage", function(msg) {
+		io.sockets.emit("bottomRight", msg);
+	});
+
+	socket.on("bottomRight:hideimage", function(msg) {
+		io.sockets.emit("bottomRight", "hideimage");
+	});
+
+	socket.on("bottomRightLimitToChosen", function(msg) {
+		io.sockets.emit("bottomRightLimitToChosen", msg);
+	});
+
+	socket.on("bottomRightshowAllFixtures", function(msg) {
+		io.sockets.emit("bottomRightshowAllFixtures", msg);
+	});
+
 	/*
 	* 		Ticker
 	*/

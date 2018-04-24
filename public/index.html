@@ -45,12 +45,17 @@
        
         <div ng-controller="bottomRightCtrl">
             <div id="bottomRightBox">
-                <h1>{{bottomRight.chosenSport}}</h1>
-                <div class="row animate-repeat bouncy-slide-left" ngif="bottomRight.chosenSport == row.sport" ng-repeat="row in bottomRight.rows | filter: { sport: bottomRight.chosenSport }">
-                    <div class="fixtureGroup">{{ row.group }}</div>
-                    <div class="fixtureTime">{{ row.time }}</div>
-                    <div class="fixtureDay">{{ row.day }}</div>
-                    <div class="fixturePoints">{{ row.points }}</div>
+                <div class="rowContainer">
+                    <h1>{{bottomRight.chosenSport}}</h1>
+                    <div class="row animate-repeat bouncy-slide-left" ngif="bottomRight.chosenSport == row.sport" ng-repeat="row in bottomRight.rows | filter: { sport: bottomRight.chosenSport }">
+                        <div class="fixtureGroup">{{ row.group }}</div>
+                        <div class="fixtureTime">{{ row.time }}</div>
+                        <div class="fixtureDay">{{ row.day }}</div>
+                        <div class="fixturePoints">{{ row.points }}</div>
+                    </div>
+                    <div class="bottomRightImage">
+                        <!-- <img ng-src="images/bottomRight/{{bottomRight.chosenSport}}.jpg" /> -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -71,8 +76,7 @@
             </div>
         </div>
         
-        <div ng-controller="bottomLeftCtrl">         
-            
+        <div ng-controller="bottomLeftCtrl">                  
             <div class="animate-repeat" ng-hide="bottomLeft.momentOverride" ng-repeat="moment in moments.rows | filter: { id: currentMomentId }"> 
                 <div id="bottomLeftBox">   
                     <div class="header">                 

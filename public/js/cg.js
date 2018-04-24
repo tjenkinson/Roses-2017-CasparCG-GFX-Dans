@@ -27,33 +27,43 @@ app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
             $scope.bottomRight = [];
         }
                 
-        socket.on("bottomRight", function (msg) {
+        /* socket.on("bottomRight", function (msg) {
             $scope.bottomRight = msg;
-            if ($scope.bottomRight) {
-                if($scope.bottomRight.location) {
-                    var location = $scope.bottomRight.location;
+        }, true); */
+
+        socket.on("bottomRightLimitToChosen", function(msg){
+            if (msg !== undefined) {
+                if(msg.chosenLocation) {
+                    var location = msg.chosenLocation;
                 } else {
                     var location = "";
                 }
-                if($scope.bottomRight.sport) {
-                    var sport = $scope.bottomRight.sport;
+                if(msg.chosenSport) {
+                    var sport = msg.chosenSport;
                 } else {
                     var sport = "";
-                }if($scope.bottomRight.group) {
-                    var group = $scope.bottomRight.group;
+                }if(msg.chosenGroup) {
+                    var group = msg.chosenGroup;
                 } else {
                     var group = "";
-                }if($scope.bottomRight.broadcast) {
-                    var broadcast = $scope.bottomRight.broadcast;
+                }if(msg.chosenBroadcast) {
+                    var broadcast = msg.chosenBroadcast;
                 } else {
                     var boardcast = "";
                 }
+
                 updateFixtures(location,sport,group,broadcast);
             }
         }, true);
            
         var updateFixtures = function(location,sport,group,broadcast) {
-          	
+              
+            if(location !== undefined || sport !== undefined || group !== undefined || broadcast !== undefined){
+                var overrideCheck = true; 
+            } else {
+                var overrideCheck = false;
+            }
+
             var fetchData = function () {
                 var config = { headers:  {
                   'Accept': 'application/json',
@@ -62,17 +72,14 @@ app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
             };
             
             $http.get('/data/timetable_entries_example.json', config).then(function (response) {
-                    // console.log('Updating fixtures');
-                    
+                   
                     var daysOfWeek = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
                     
                     // Need to do a check here to see if the data has changed, if so then carry on cowboy. 
                     var fixturesFileUpdated = new Date(response.headers('Last-Modified'));
                                         
-                    if(fixturesFileUpdated >= $scope.bottomRight.fixturesFileUpdated) {
-                        // console.log('No new fixtures');
-                    } else {
-                        $scope.bottomRight.fixturesFileUpdated = fixturesFileUpdated;
+                    if(fixturesFileUpdated >= $scope.bottomRight.fixturesFileUpdated || $scope.bottomRight.fixturesFileUpdated == undefined || overrideCheck == true) {
+                         $scope.bottomRight.fixturesFileUpdated = fixturesFileUpdated;
                         // console.log('New fixtures');
                         var newLivebottomRight = {"rows" : []}; 
                     
@@ -100,8 +107,14 @@ app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
                             buildArray["location"] = response.data[i].location.name;
                             buildArray["la1tv"] = response.data[i].la1tv_coverage_level;
                             buildArray["points"] = response.data[i].point.amount;
-                            newLivebottomRight["rows"].push(buildArray);
-        
+
+                            if(overrideCheck == true){
+                                if(buildArray["location"] == location || location == "All"){
+                                    newLivebottomRight["rows"].push(buildArray);    
+                                }
+                            } else {
+                                newLivebottomRight["rows"].push(buildArray);
+                            }
                         }                            
                     
                         if($scope.bottomRight.chosenSport == undefined){
@@ -109,8 +122,11 @@ app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
                         }
                         $scope.bottomRight.rows = newLivebottomRight["rows"];                 
                         // console.log($scope.bottomRight);
-                    
-                    
+                        
+                        if(overrideCheck == true){
+                            changeSport();
+                        }
+
                         // Change the sports every so often
                         if($scope.bottomRight.chosenSportSwitching !== true) {
                             $interval(changeSport,$scope.fixturesOnScreen);
@@ -158,6 +174,7 @@ app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
                 // console.log('No sport changes');
             }
         }
+
         // First fetch plz
         updateFixtures();
         

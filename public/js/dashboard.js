@@ -97,10 +97,10 @@ app.controller('bottomRightCGController', ['$scope', 'socket', '$http', 'localSt
         socket.on("bottomRight", function (msg) {
             $scope.bottomRight = msg;
             if(msg.location == null){
-                console.log("Nothing here, loading defaults");
+                //console.log("Nothing here, loading defaults");
                 $scope.updateSelectables();
             } else {
-                console.log("Something here: " + msg);
+                //console.log("Something here: " + msg);
             }
         });
 
@@ -112,14 +112,20 @@ app.controller('bottomRightCGController', ['$scope', 'socket', '$http', 'localSt
                 getbottomRightData();
             }
         }, true);
-        
-        socket.on("bottomRight", function (msg) {
-            $scope.bottomRight = msg;
-        });
-        
+       
         function getbottomRightData() {
             socket.emit("bottomRight:get");
         }
+
+        $scope.limitToChosen = function(){
+            console.log($scope.bottomRight);
+            socket.emit('bottomRightLimitToChosen', $scope.bottomRight);
+        };
+
+        $scope.showAllFixtures = function(){
+            console.log("showAllFixtures");
+            socket.emit('bottomRightshowAllFixtures', "showAllFixtures");
+        };
         
         $scope.applyImageOverride = function() {
             $scope.bottomRight.imageOveride = true;
@@ -150,7 +156,7 @@ app.controller('bottomRightCGController', ['$scope', 'socket', '$http', 'localSt
         
         $scope.updateSelectables = function (location,sport,group,broadcast) {
             if(!location){
-                console.log('Getting Selectable Values');
+                //console.log('Getting Selectable Values');
             }
             var fetchData = function () {
                 var config = {headers:  {
@@ -158,17 +164,17 @@ app.controller('bottomRightCGController', ['$scope', 'socket', '$http', 'localSt
                   'Content-Type': 'application/json',
                 }
             };
-            $http.get('/data/fixtures.json', config).then(function (response) {
+            $http.get('/data/timetable_entries_example.json', config).then(function (response) {
 						$scope.bottomRight.livebottomRight = response.data;   
-				   	    
+				   	    // console.log($scope.bottomRight.livebottomRight);
 				   	    $scope.bottomRight.options = ["sport","group","points","location","time","broadcast","none"];
 				   	    
 				   	    // Sort out locations
 				   	    if(!location || location == "All"){
                             var locations = Array(); 
                             for(var i = 0; i < $scope.bottomRight.livebottomRight.length; i++){
-                                if(locations.indexOf($scope.bottomRight.livebottomRight[i].location) == -1){
-                                    locations.push($scope.bottomRight.livebottomRight[i].location);
+                                if(locations.indexOf($scope.bottomRight.livebottomRight[i].location.name) == -1){
+                                    locations.push($scope.bottomRight.livebottomRight[i].location.name);
                                 }
                             }
                             locations.sort();
@@ -186,15 +192,15 @@ app.controller('bottomRightCGController', ['$scope', 'socket', '$http', 'localSt
                             for(var i = 0; i < $scope.bottomRight.livebottomRight.length; i++){
                                 var oktopush = false;
                                 if(location){
-                                    if($scope.bottomRight.livebottomRight[i].location == location){
+                                    if($scope.bottomRight.livebottomRight[i].location.name == location){
                                         var oktopush = true;
                                     }
                                 } else { 
                                     var oktopush = true;
                                 }
                                 if(oktopush == true){
-                                   if(sports.indexOf($scope.bottomRight.livebottomRight[i].sport) == -1){
-                                        sports.push($scope.bottomRight.livebottomRight[i].sport);
+                                   if(sports.indexOf($scope.bottomRight.livebottomRight[i].team.sport.title) == -1){
+                                        sports.push($scope.bottomRight.livebottomRight[i].team.sport.title);
                                     }
                                 }
                             }
@@ -212,7 +218,7 @@ app.controller('bottomRightCGController', ['$scope', 'socket', '$http', 'localSt
                         for(var i = 0; i < $scope.bottomRight.livebottomRight.length; i++){ 
                            var oktopush = false;
                            if(location){
-                                if($scope.bottomRight.livebottomRight[i].location == location){
+                                if($scope.bottomRight.livebottomRight[i].location.name == location){
                                     var oktopush = true;
                                 }
                             } else { 
@@ -220,13 +226,13 @@ app.controller('bottomRightCGController', ['$scope', 'socket', '$http', 'localSt
                             }
                             if(sport){
                                 if(!location || location == "All"){
-                                    if($scope.bottomRight.livebottomRight[i].sport == sport){
+                                    if($scope.bottomRight.livebottomRight[i].team.sport.name == sport){
                                         var oktopush = true;
                                     } else {
                                         var oktopush = false;
                                     }
                                 } else {
-                                    if(oktopush == true && $scope.bottomRight.livebottomRight[i].sport == sport){
+                                    if(oktopush == true && $scope.bottomRight.livebottomRight[i].team.sport.name == sport){
                                         var oktopush = true;
                                     } else {
                                         var oktopush = false;
@@ -234,8 +240,8 @@ app.controller('bottomRightCGController', ['$scope', 'socket', '$http', 'localSt
                                 }
                             }                             
                             if(oktopush == true){
-                                if(groups.indexOf($scope.bottomRight.livebottomRight[i].group) == -1){
-                                    groups.push($scope.bottomRight.livebottomRight[i].group);
+                                if(groups.indexOf($scope.bottomRight.livebottomRight[i].team.title) == -1){
+                                    groups.push($scope.bottomRight.livebottomRight[i].team.title);
                                 }
                             }
                         }
@@ -246,8 +252,8 @@ app.controller('bottomRightCGController', ['$scope', 'socket', '$http', 'localSt
                         // console.log("Loading Groups");
                         var broadcasts = Array(); 
                         for(var i = 0; i < $scope.bottomRight.livebottomRight.length; i++){
-                            if(broadcasts.indexOf($scope.bottomRight.livebottomRight[i].broadcast) == -1){
-                                broadcasts.push($scope.bottomRight.livebottomRight[i].broadcast);
+                            if(broadcasts.indexOf($scope.bottomRight.livebottomRight[i].la1tv_coverage_level) == -1){
+                                broadcasts.push($scope.bottomRight.livebottomRight[i].la1tv_coverage_level);
                             }
                         }
                         broadcasts.sort();
