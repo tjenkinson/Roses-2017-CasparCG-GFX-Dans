@@ -35,19 +35,23 @@ app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
             if (msg !== undefined) {
                 if(msg.chosenLocation) {
                     var location = msg.chosenLocation;
+                    $scope.bottomRight.chosenLocation = msg.chosenLocation;
                 } else {
                     var location = "";
                 }
                 if(msg.chosenSport) {
                     var sport = msg.chosenSport;
+                    $scope.bottomRight.chosenSport = msg.chosenSport;
                 } else {
                     var sport = "";
                 }if(msg.chosenGroup) {
                     var group = msg.chosenGroup;
+                    $scope.bottomRight.chosenGroup = msg.chosenGroup;
                 } else {
                     var group = "";
                 }if(msg.chosenBroadcast) {
                     var broadcast = msg.chosenBroadcast;
+                    $scope.bottomRight.chosenBroadcast = msg.chosenBroadcast;
                 } else {
                     var boardcast = "";
                 }
@@ -56,12 +60,24 @@ app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
             }
         }, true);
 
-        socket.on("bottomRightshowAllFixtures", function(msg){
+        socket.on("bottomRightshowAllFixtures", function(){
             updateFixtures();
         }, true);
            
         var updateFixtures = function(location,sport,group,broadcast) {
-              
+            if($scope.bottomRight.chosenLocation !== "" && location == undefined){
+                location = $scope.bottomRight.chosenLocation;
+            }
+            if($scope.bottomRight.chosenSport !== "" && sport == undefined){
+                sport = $scope.bottomRight.chosenLocation;
+            }  
+            if($scope.bottomRight.chosenGroup !== "" && group == undefined){
+                group = $scope.bottomRight.chosenLocation;
+            }  
+            if($scope.bottomRight.chosenBroadcast !== "" && broadcast == undefined){
+                broadcast = $scope.bottomRight.chosenLocation;
+            }  
+
             if(location !== undefined || sport !== undefined || group !== undefined || broadcast !== undefined){
                 var overrideCheck = true; 
             } else {
@@ -120,7 +136,7 @@ app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
                                 newLivebottomRight["rows"].push(buildArray);
                             }
                         }                            
-                    
+
                         if($scope.bottomRight.chosenSport == undefined){
                             $scope.bottomRight.chosenSport = newLivebottomRight["rows"][0].sport;
                         }
