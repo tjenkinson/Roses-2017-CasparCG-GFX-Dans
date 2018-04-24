@@ -412,7 +412,7 @@ app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
                 return;
               } else { 
                  
-                var tickerFileUpdated = ""; //new Date(response.headers('Last-Modified'));      
+                var tickerFileUpdated = new Date(response.headers('Last-Modified'));      
 
                 // Only do anything if the file has bene updated since we last updated it
                 if(tickerFileUpdated >= $scope.ticker.tickerFileUpdated || $scope.ticker.tickerFileUpdated == undefined){
@@ -488,29 +488,26 @@ app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
                         
                         // Build string for each element
                         var iScoreString = timetableInfo.team.sport.title + " " + timetableInfo.team.title + ticker.rows[i].winner + " " + ticker.rows[i].lancs_score + '-' +  ticker.rows[i].york_score + " (" + ticker.rows[i].points + "pts)";
-                                    
-                        $scope.ticker.tickerPlainText = $scope.ticker.tickerPlainText + iScoreString;
-                        $scope.ticker.tickerText =  $sce.trustAsHtml($scope.ticker.tickerText + iScoreString);                       
-                    
+                                   
                         var iScoreElement = {"id": ticker.rows[i].id, "text" : iScoreString}
                         tickerElementsArray.push(iScoreElement);
                     }
-                    
-                    console.log(tickerElementsArray);
+
+                    $scope.tickerElementsArray = tickerElementsArray;
+
                     function updateMarqueeStuff(){
                         updateArray = [() => '<span class="tickerHeader">' + $scope.ticker.tickerHeader + '</span>'];
                         tickerElementsArray.forEach(function(element){
                             updateArray.push(function() { return element.text; });
-                        });
-                        // console.log(updateArray);
+                        }); 
                         control.update(updateArray);
                     }
                     
                     if($scope.marqueeIsRunning == true){
-                        updateMarqueeStuff();
-                        console.log("Updating marquee");
+                        // console.log("Updating marquee");
+                        updateMarqueeStuff();                   
                     } else {
-                        console.log("Kicking off marquee");
+                        // console.log("Kicking off marquee");
                         initialMarqueeStuff();
                     }
                     
@@ -534,11 +531,19 @@ app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
             if (marquee.isWaitingForItem()) {
                 marquee.appendItem($header);
             }
-            control = loop(marquee, [
-                () => 'Add some good content in here'
-                ], () => {
+
+            // Now let's get our initial values
+            var initialArray =  [];
+            if($scope.tickerElementsArray !== undefined){
+                $scope.tickerElementsArray.forEach(function(element){
+                    initialArray.push(function() { return element.text;});
+                });  
+            }
+
+            // Now lets start it all up
+            control = loop(marquee, initialArray, () => {
                 const $separator = document.createElement('div');
-                $separator.innerHTML = '<span style="border-right: 3px solid white; margin-right: 12px; padding-right: 12px;"></span>';
+                $separator.innerHTML = '<span style="border-right: 6px solid white; margin-right: 12px; margin-left: 12px;"></span>';
                 return $separator;
             });
             $scope.marqueeIsRunning = true;

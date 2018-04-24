@@ -171,9 +171,11 @@ function loop(marquee) {
       var $seperator = (0, _helpers.toDomEl)(seperatorBuilder());
       var $container = document.createElement('div');
       $seperator.style.display = 'inline';
-      $item.style.display = 'inline';
-      $container.appendChild($seperator);
+      $item.style.display = 'inline';  
       $container.appendChild($item);
+      $container.innerHTML = $container.textContent;
+      if(lastIndex)
+      $container.appendChild($seperator);
       $item = $container;
     }
     marquee.appendItem($item);
