@@ -55,6 +55,10 @@ app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
                 updateFixtures(location,sport,group,broadcast);
             }
         }, true);
+
+        socket.on("bottomRightshowAllFixtures", function(msg){
+            updateFixtures();
+        }, true);
            
         var updateFixtures = function(location,sport,group,broadcast) {
               
@@ -109,7 +113,7 @@ app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
                             buildArray["points"] = response.data[i].point.amount;
 
                             if(overrideCheck == true){
-                                if(buildArray["location"] == location || location == "All"){
+                                if((buildArray["location"] == location || location == "All") && (buildArray["sport"] == sport || sport == "All" ) && (buildArray["group"] == group || group == "All") && (buildArray["broadcast"] == broadcast || broadcast == "All")){
                                     newLivebottomRight["rows"].push(buildArray);    
                                 }
                             } else {
