@@ -184,6 +184,7 @@ function loop(marquee) {
   appendItem();
   return {
     update: function update(newBuilders) {
+      lastIndex = -1;
       builders = newBuilders.slice();
       appendItem(false);
     }
