@@ -270,15 +270,20 @@ app.controller('bottomRightCGController', ['$scope', 'socket', '$http', 'localSt
 
 app.controller('bottomLeftCGController', ['$scope', 'socket', 'localStorageService',
     function($scope, socket, localStorageService){
-        
+
+        if($scope.bottomLeft == undefined){
+            $scope.bottomLeft = {"grabThisMany": 10}
+        }
+        if($scope.moments == undefined){
+            $scope.moments = {"moments":[]}
+        }
+
         // Grab current moments, first time it loads. 
         socket.emit("pleaseSendMoments");
         
         socket.on("bottomLeft", function (msg) {
             // $scope.bottomLeft = msg;
-            if(msg.grabThisMany == undefined){
-                $scope.bottomLeft.grabThisMany = 10;
-            }
+
         });
 
         $scope.$watch('bottomLeft', function() {
@@ -296,7 +301,7 @@ app.controller('bottomLeftCGController', ['$scope', 'socket', 'localStorageServi
         }   
              
         socket.on('momentsUpdated', function(msg){
-            $scope.moments = msg;
+            $scope.moments.rows = msg.rows;
             // console.log('Moments have been updated');
             // console.log($scope.moments);
         });

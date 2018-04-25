@@ -21,7 +21,7 @@ app.controller('topRightCtrl', ['$scope', '$timeout', 'socket',
 // Bottom Right Fixtures
 app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
     function($scope, $interval, $http, socket){
-        $scope.fixturesTickInterval = 60000; //ms
+        $scope.fixturesTickInterval = 300000; //ms
         $scope.fixturesOnScreen = 10000; //ms    
         if($scope.bottomRight == undefined){
             $scope.bottomRight = [];
@@ -67,21 +67,29 @@ app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
         var updateFixtures = function(location,sport,group,broadcast) {
             if($scope.bottomRight.chosenLocation !== "" && location == undefined){
                 location = $scope.bottomRight.chosenLocation;
+            } else {
+                location = undefined;
             }
             if($scope.bottomRight.chosenSport !== "" && sport == undefined){
-                sport = $scope.bottomRight.chosenLocation;
-            }  
+                sport = $scope.bottomRight.chosenSport;
+            }  else {
+                sport = undefined;
+            }
             if($scope.bottomRight.chosenGroup !== "" && group == undefined){
-                group = $scope.bottomRight.chosenLocation;
-            }  
+                group = $scope.bottomRight.chosenGroup;
+            } else {
+                group = undefined;
+            }
             if($scope.bottomRight.chosenBroadcast !== "" && broadcast == undefined){
-                broadcast = $scope.bottomRight.chosenLocation;
-            }  
+                broadcast = $scope.bottomRight.chosenBroadcast;
+            }  else {
+                broadcast = undefined;
+            }
 
             if(location !== undefined || sport !== undefined || group !== undefined || broadcast !== undefined){
-                var overrideCheck = true; 
+                $scope.bottomRight.overrideCheck = true; 
             } else {
-                var overrideCheck = false;
+                $scope.bottomRight.overrideCheck = false;
             }
 
             var fetchData = function () {
@@ -94,13 +102,15 @@ app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
             $http.get('/data/timetable_entries_example.json', config).then(function (response) {
                    
                     var daysOfWeek = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-                    
+                    if($scope.bottomRight.fixturesFileUpdated == undefined){
+                        $scope.bottomRight.fixturesFileUpdated = new Date("01/01/1970");
+                    }
                     // Need to do a check here to see if the data has changed, if so then carry on cowboy. 
                     var fixturesFileUpdated = new Date(response.headers('Last-Modified'));
                                         
-                    if(fixturesFileUpdated >= $scope.bottomRight.fixturesFileUpdated || $scope.bottomRight.fixturesFileUpdated == undefined || overrideCheck == true) {
-                         $scope.bottomRight.fixturesFileUpdated = fixturesFileUpdated;
-                        // console.log('New fixtures');
+                    if(fixturesFileUpdated > $scope.bottomRight.fixturesFileUpdated || $scope.bottomRight.overrideCheck == true) {
+                        console.log("Fixtures file updated");
+                        $scope.bottomRight.fixturesFileUpdated = fixturesFileUpdated;
                         var newLivebottomRight = {"rows" : []}; 
                     
                         for(var i = 0; i < response.data.length; i++){
@@ -125,10 +135,10 @@ app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
                             buildArray["day"] = day;
                             buildArray["group"] = response.data[i].team.title;
                             buildArray["location"] = response.data[i].location.name;
-                            buildArray["la1tv"] = response.data[i].la1tv_coverage_level;
+                            buildArray["broadcast"] = response.data[i].la1tv_coverage_level;
                             buildArray["points"] = response.data[i].point.amount;
 
-                            if(overrideCheck == true){
+                            if($scope.bottomRight.overrideCheck == true){
                                 if((buildArray["location"] == location || location == "All") && (buildArray["sport"] == sport || sport == "All" ) && (buildArray["group"] == group || group == "All") && (buildArray["broadcast"] == broadcast || broadcast == "All")){
                                     newLivebottomRight["rows"].push(buildArray);    
                                 }
@@ -137,23 +147,25 @@ app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
                             }
                         }                            
 
-                        if($scope.bottomRight.chosenSport == undefined){
-                            $scope.bottomRight.chosenSport = newLivebottomRight["rows"][0].sport;
+                        if($scope.bottomRight.currentSport == undefined){
+                            $scope.bottomRight.currentSport = newLivebottomRight["rows"][0].sport;
                         }
                         $scope.bottomRight.rows = newLivebottomRight["rows"];                 
                         // console.log($scope.bottomRight);
                         
-                        if(overrideCheck == true){
+                        if($scope.bottomRight.overrideCheck == true){
                             changeSport();
                         }
 
                         // Change the sports every so often
-                        if($scope.bottomRight.chosenSportSwitching !== true) {
+                        if($scope.bottomRight.currentSportSwitching !== true) {
                             $interval(changeSport,$scope.fixturesOnScreen);
                             // console.log('Starting the cycle');
                         } else {
                             // console.log('Cycle already peddling');
                         }
+                    } else {
+                        console.log("Fixtures file hasn't changed");
                     }
 
                  });    
@@ -175,7 +187,7 @@ app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
                 }
                 uniqueSports = [...new Set(allSports)];
                 if($scope.bottomRight.currenti == undefined){
-                    $scope.bottomRight.currenti = uniqueSports.findIndex(function(element){ return element == $scope.bottomRight.chosenSport});
+                    $scope.bottomRight.currenti = uniqueSports.findIndex(function(element){ return element == $scope.bottomRight.currentSport});
                 }
 
                 if($scope.bottomRight.currenti !== undefined){ 
@@ -187,9 +199,9 @@ app.controller('bottomRightCtrl', ['$scope', '$interval', '$http', 'socket',
                     $scope.bottomRight.currenti = 0;
                 }
             
-                $scope.bottomRight.chosenSport = uniqueSports[$scope.bottomRight.currenti];
-                // console.log('Chosen Sport = '+ $scope.bottomRight.chosenSport);
-                $scope.bottomRight.chosenSportSwitching = true;
+                $scope.bottomRight.currentSport = uniqueSports[$scope.bottomRight.currenti];
+                // console.log('Chosen Sport = '+ $scope.bottomRight.currentSport);
+                $scope.bottomRight.currentSportSwitching = true;
             } else {
                 // console.log('No sport changes');
             }
