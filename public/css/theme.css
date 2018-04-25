@@ -52,7 +52,7 @@ h1, h2, h3, h4 {
   clear: both;
 }
 
-#txAreaBox, #topRightBox, #bottomRightBox, #bottomLeftBox, #bottomCenterBox, #tickerBox {
+#txAreaBox, #topRightBox, #bottomRightBox, #bottomLeftBox, #bottomCenterBox {
     position: absolute;
     overflow: hidden;   
 }
@@ -95,13 +95,6 @@ h1, h2, h3, h4 {
     height: 75px;
     background-color: #f2f2f2;
 }
-#tickerBox {
-    bottom: 30px;
-    left: 0px;
-    width: 1280px;
-    height: 30px;
-    background-color: #1f1a34;
-}
 
 #emptySpace {
     bottom: 0px;
@@ -138,7 +131,7 @@ strong {
 
 .teamLancsInverse, .teamYorkInverse {
     margin-left: 12px;
-    margin-right; 12px;
+    margin-right: 12px;
     padding-left: 12px;
     padding-right: 12px;
 }
@@ -288,26 +281,16 @@ strong {
 /*              [Ticker Box]                      */
 /**************************************************/
 
-#tickerBox .tickerHeader {
-    background-color: white;
-    padding-left: 12px;
-    padding-right: 12px;
-    color: #1f1a34;
-    font-size: 24px;
-    margin-left: 12px;   
-    margin-right: 12px;
-}
-
- #marquee {
+#marquee {
     position: fixed;
     overflow: hidden;
     margin: 0;
-    line-height: 30px;
-    height: 30px;
     font-size: 24px;
     bottom: 30px;
     left: 0;
     right: 0;
+    height: 30px;
+    line-height: 30px;
     background-color: #1f1a34;
     color: #ffffff;
 
@@ -318,5 +301,15 @@ strong {
     padding-left: 12px;
     padding-right: 12px;
     color: #1f1a34;
-    font-size: 24px;   
+    font-size: 24px;
+    margin-left: 12px;   
+    margin-right: 12px;
+}
+
+#marquee .marquee-seperator {
+    display: inline-block;
+    border-right: 6px solid white;
+    margin-right: 12px;
+    margin-left: 12px;
+    width: 0;
 }

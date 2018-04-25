@@ -374,25 +374,44 @@ app.controller('bottomLeftCtrl', ['$scope', '$interval', '$http', 'socket', '$sc
 
 // Ticker Things
 app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
-    function($scope, $interval, $http, socket, $sce){      
-        $scope.ticker = {"rows":[], grabThisMany: 10, unconfirmedFixtures: true};
-        $scope.tickerCheckTickInterval = 10000;
-        
-        socket.on("ticker", function (msg) {
-            $scope.ticker.grabThisMany = msg.grabThisMany;
-            $scope.ticker.overrideHeader = msg.overrideHeader;
-            $scope.ticker.unconfirmedFixtures = msg.unconfirmedFixtures;
-            fetchTickerScores();
-        });
-        
-        $scope.$watch('ticker', function() {
-            if (!$scope.ticker) {
-                getTickerData();
-            }
-        }, true);
+    function($scope, $interval, $http, socket, $sce){
+        var $seperatorBuilder = function() {
+            const $seperator = document.createElement('span');
+            $seperator.className = "marquee-seperator";
+            $seperator.innerHTML = "&nbsp";
+            return $seperator;
+        };
+        function createMarquee() {
+            var $marquee = document.getElementById('marquee');
+            var marquee = window.m = new dynamicMarquee.Marquee($marquee, { rate: -75 });
+            return dynamicMarquee.loop(marquee);
+        }
 
-        function getTickerData() {
-            socket.emit("ticker:get");
+        $scope.ticker = {$rowBuilders:[], grabThisMany: 10, unconfirmedFixtures: true};
+        $scope.tickerCheckTickInterval = 10000;
+        var control = createMarquee();
+        
+        function updateMarquee() {
+            // TODO use $.watch
+            items = [
+                function() {
+                    var $header = document.createElement('span');
+                    $header.className = "tickerHeader";
+                    $header.innerText = $scope.ticker.tickerHeader;
+                    return $header;
+                }
+            ];
+            $scope.ticker.$rowBuilders.forEach(function($builder, i) {
+                items.push(function() {
+                    var $container = document.createElement('span');
+                    if (i > 0) {
+                        $container.appendChild($seperatorBuilder());
+                    }
+                    $container.appendChild($builder());
+                    return $container;
+                });
+            });
+            control.update(items);
         }
         
         var fetchTickerScores = function () {
@@ -407,150 +426,98 @@ app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
                 var response = values[0];  
                 var timetable = values[1];  
 
-              if(isNaN(response.data[0].id) || isNaN(response.data[0].id)){
-                console.log("Roses live is giving us nonsense. Typical.");
-                return;
-              } else { 
+                if(isNaN(response.data[0].id) || isNaN(response.data[0].id)){
+                    console.log("Roses live is giving us nonsense. Typical.");
+                    return;
+                } else { 
                  
-                var tickerFileUpdated = new Date(response.headers('Last-Modified'));      
+                    var tickerFileUpdated = new Date(response.headers('Last-Modified'));      
 
-                // Only do anything if the file has bene updated since we last updated it
-                if(tickerFileUpdated >= $scope.ticker.tickerFileUpdated || $scope.ticker.tickerFileUpdated == undefined){
-                    // Sort Array so we're getting the most recent content       
-                    response.data.sort(function(a, b){
-                        var keyA = new Date(a.updated_at),
-                            keyB = new Date(b.updated_at);
-                        // Compare the 2 dates
-                        if(keyA < keyB) return -1;
-                        if(keyA > keyB) return 1;
-                        return 0;
-                    });
+                    // Only do anything if the file has bene updated since we last updated it
+                    if(!$scope.ticker.tickerFileUpdated || tickerFileUpdated >= $scope.ticker.tickerFileUpdated) {
+                        $scope.ticker.tickerFileUpdated = tickerFileUpdated;
+                        // Sort Array so we're getting the most recent content       
+                        response.data.sort(function(a, b){
+                            var keyA = new Date(a.updated_at),
+                                keyB = new Date(b.updated_at);
+                            // Compare the 2 dates
+                            if(keyA < keyB) return -1;
+                            if(keyA > keyB) return 1;
+                            return 0;
+                        });
 
-                    // Build empty stuff if required
-                    if(ticker == undefined){
-                        var ticker = {"rows" : [], "tickerFileUpdated" : tickerFileUpdated }; 
-                    }
-                    for(i=0; i<response.data.length; i++){
-                        // Make an empty one to build this fixture with
-                        var buildArray = {};  
+                        var rows = [];
+                        response.data.forEach(function(responseItem) {
+                            // Choose whether or not to display unconfirmed fixtures
+                            if($scope.ticker.unconfirmedFixtures || responseItem.confirmed === "Y") {
+                                var timetableData = null;
+                                timetable.data.some(function(entry) {
+                                    if (entry.id == responseItem.timetable_entry_id) {
+                                        timetableData = entry;
+                                        return true;
+                                    }
+                                    return false;
+                                });
+                                if (!timetableData) {
+                                    console.error('Missing timetable data', responseItem);
+                                    return;
+                                }
+                                rows.push({
+                                    id: responseItem.id,
+                                    lancs_score: responseItem.lancs_score,
+                                    york_score: responseItem.york_score,
+                                    winner: responseItem.winner,
+                                    timetable_entry_id: responseItem.timetable_entry_id,
+                                    confirmed: responseItem.confirmed,
+                                    points: parseInt(responseItem.lancs_points) + parseInt(responseItem.york_points),
+                                    timetable_data: timetableData 
+                                });
+                            }
+                        });
+
+                        // The ticker header is to be displayed ahead of the scores, like 'Breaking News'
+                        $scope.ticker.tickerHeader = $scope.ticker.overrideHeader || "Latest Scores";
+                        $scope.ticker.$rowBuilders = rows.slice(0, $scope.ticker.grabThisMany).map(function(row) {
+                            var timetableData = row.timetable_data;
+                            // Build string for each element
+                            var $builder = function() {
+                                var $winner = document.createElement('span');
+                                if (row.winner == "L"){
+                                    $winner.className = "teamLancsInverse";
+                                    $winner.innerText = "Lancs";
+                                } else {
+                                    $winner.className = "teamYorkInverse";
+                                    $winner.innerText = "York";
+                                }
+
+                                var $scoreEl = $("<span />");
+                                $scoreEl.append($("<span />").text(timetableData.team.sport.title + " " + timetableData.team.title + " "));
+                                $scoreEl.append($winner);
+                                $scoreEl.append($("<span />").text(" " + row.lancs_score + '-' +  row.york_score + " (" + row.points + "pts)"));
+                                return $scoreEl[0];
+                            }
+                            return $builder;
+                        });
+                        // console.log($scope.ticker.$rowBuilders);
+                        updateMarquee();
                         
-                        // Do any manipulation of the data first
-                        if(response.data[i].winner == "L"){
-                            response.data[i].winner = '<span class="teamLancsInverse">Lancs</span>';
-                        } else if (response.data[i].winner == "Y") {
-                            response.data[i].winner = '<span class="teamYorkInverse">York</span>';
-                        } 
-                        var gamePoints = parseInt(response.data[i].lancs_points) + parseInt(response.data[i].york_points);
-
-                        // Set buildArray attributes to later use
-                        buildArray["id"] = response.data[i].id;
-                        buildArray["lancs_score"] = response.data[i].lancs_score;
-                        buildArray["york_score"] = response.data[i].york_score;
-                        buildArray["winner"] = response.data[i].winner;
-                        buildArray["timetable_entry_id"] = response.data[i].timetable_entry_id;
-                        buildArray["confirmed"] = response.data[i].confirmed;
-                        buildArray["points"] = gamePoints;
-                        
-                        // Choose whether or not to display unconfirmed fixtures
-                        if($scope.ticker.unconfirmedFixtures == false && buildArray["confirmed"] == "N"){
-                            // Don't add it to the thing
-                        } else {
-                            ticker.rows.push(buildArray);
-                        }
-                    }
-
-                    $scope.ticker.rows = ticker.rows;
-                    $scope.ticker.tickerFileUpdated = ticker.tickerFileUpdated;
-                    
-                    // Build the ticker text
-                    $scope.ticker.tickerText = "";
-                    $scope.ticker.tickerPlainText = "";
-                    var tickerElementsArray = [];
-                    
-                    // If set, set limit to show how many they've asked for
-                    if($scope.ticker.grabThisMany < $scope.ticker.rows.length){
-                        var limit = $scope.ticker.grabThisMany;
                     } else {
-                        var limit = $scope.ticker.rows.length;
-                    }
-
-                    // The ticker header is to be displayed ahead of the scores, like 'Breaking News'
-                    if($scope.ticker.overrideHeader == undefined){
-                        $scope.ticker.tickerHeader = "Latest Scores";
-                    } else {
-                        $scope.ticker.tickerHeader = $scope.ticker.overrideHeader;
-                    }
-
-                    for(i=0; i<limit; i++){
-                        // Get information about the event
-                        var timetableIndex = timetable.data.findIndex(function(element){ return element.id == ticker.rows[i].timetable_entry_id});                  
-                        var timetableInfo = timetable.data[timetableIndex];  
-                        
-                        // Build string for each element
-                        var iScoreString = timetableInfo.team.sport.title + " " + timetableInfo.team.title + ticker.rows[i].winner + " " + ticker.rows[i].lancs_score + '-' +  ticker.rows[i].york_score + " (" + ticker.rows[i].points + "pts)";
-                                   
-                        var iScoreElement = {"id": ticker.rows[i].id, "text" : iScoreString}
-                        tickerElementsArray.push(iScoreElement);
-                    }
-
-                    $scope.tickerElementsArray = tickerElementsArray;
-
-                    function updateMarqueeStuff(){
-                        updateArray = [() => '<span class="tickerHeader">' + $scope.ticker.tickerHeader + '</span>'];
-                        tickerElementsArray.forEach(function(element){
-                            updateArray.push(function() { return element.text; });
-                        }); 
-                        control.update(updateArray);
-                    }
-                    
-                    if($scope.marqueeIsRunning == true){
-                        // console.log("Updating marquee");
-                        updateMarqueeStuff();                   
-                    } else {
-                        // console.log("Kicking off marquee");
-                        initialMarqueeStuff();
-                    }
-                    
-                } else {
-                    //console.log("The scores file hasn't changed since we last did anything");
-                }                             
-              }              
-            }
+                        //console.log("The scores file hasn't changed since we last did anything");
+                    }                             
+                }              
+                }
           );
         };
+
+        socket.on("ticker", function (msg) {
+            $scope.ticker.grabThisMany = msg.grabThisMany;
+            $scope.ticker.overrideHeader = msg.overrideHeader;
+            $scope.ticker.unconfirmedFixtures = msg.unconfirmedFixtures;
+            fetchTickerScores();
+        });
         
-        var control;
-        function initialMarqueeStuff(){
-            const { Marquee, loop } = dynamicMarquee;
-            const $marquee = document.getElementById('marquee');
-            const marquee = window.m = new Marquee($marquee, { rate: -75 });
-            
-            // Let's first add our title
-            const $header = document.createElement('div');
-            $header.innerHTML = '<span class="tickerHeader">' + $scope.ticker.tickerHeader + '</span>';
-            if (marquee.isWaitingForItem()) {
-                marquee.appendItem($header);
-            }
-
-            // Now let's get our initial values
-            var initialArray =  [];
-            if($scope.tickerElementsArray !== undefined){
-                $scope.tickerElementsArray.forEach(function(element){
-                    initialArray.push(function() { return element.text;});
-                });  
-            }
-
-            // Now lets start it all up
-            control = loop(marquee, initialArray, () => {
-                const $separator = document.createElement('div');
-                $separator.innerHTML = '<span style="border-right: 6px solid white; margin-right: 12px; margin-left: 12px;"></span>';
-                return $separator;
-            });
-            $scope.marqueeIsRunning = true;
-        }
-
-        // First fetch plz
-        fetchTickerScores();
+        // start
+        socket.emit("ticker:get");
 
         // Start the timer
         $interval(fetchTickerScores, $scope.tickerCheckTickInterval);
