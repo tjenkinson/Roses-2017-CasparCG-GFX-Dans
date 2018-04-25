@@ -479,7 +479,6 @@ app.controller('tickerCtrl', ['$scope', '$interval', '$http', 'socket', '$sce',
                         $scope.ticker.tickerHeader = $scope.ticker.overrideHeader || "Latest Scores";
                         $scope.ticker.$rowBuilders = rows.slice(0, $scope.ticker.grabThisMany).map(function(row) {
                             var timetableData = row.timetable_data;
-                            // Build string for each element
                             var $builder = function() {
                                 var $winner = document.createElement('span');
                                 if (row.winner == "L"){
