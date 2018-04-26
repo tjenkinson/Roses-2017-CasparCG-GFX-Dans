@@ -171,11 +171,9 @@ function loop(marquee) {
       var $seperator = (0, _helpers.toDomEl)(seperatorBuilder());
       var $container = document.createElement('div');
       $seperator.style.display = 'inline';
-      $item.style.display = 'inline';  
-      $container.appendChild($item);
-      $container.innerHTML = $container.textContent;
-      if(lastIndex)
+      $item.style.display = 'inline';
       $container.appendChild($seperator);
+      $container.appendChild($item);
       $item = $container;
     }
     marquee.appendItem($item);
@@ -186,6 +184,7 @@ function loop(marquee) {
   appendItem();
   return {
     update: function update(newBuilders) {
+      lastIndex = -1;
       builders = newBuilders.slice();
       appendItem(false);
     }
@@ -234,7 +233,15 @@ var Item = exports.Item = function () {
   _createClass(Item, [{
     key: 'getSize',
     value: function getSize() {
-      return (0, _helpers.size)(this._$container, this._direction);
+      var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          _ref$inverse = _ref.inverse,
+          inverse = _ref$inverse === undefined ? false : _ref$inverse;
+
+      var dir = this._direction;
+      if (inverse) {
+        dir = dir === _direction.DIRECTION.RIGHT ? _direction.DIRECTION.DOWN : _direction.DIRECTION.RIGHT;
+      }
+      return (0, _helpers.size)(this._$container, dir);
     }
   }, {
     key: 'setOffset',
@@ -339,11 +346,16 @@ var Marquee = exports.Marquee = function () {
     this._pendingItem = null;
     var $innerContainer = document.createElement('div');
     $innerContainer.style.position = 'relative';
-    $innerContainer.style.width = '100%';
-    $innerContainer.style.height = '100%';
+    $innerContainer.style.display = 'inline-block';
     this._$container = $innerContainer;
+    this._containerSize = null;
+    if (this._direction === _direction.DIRECTION.RIGHT) {
+      $innerContainer.style.width = '100%';
+    } else {
+      $innerContainer.style.height = '100%';
+    }
+    this._updateContainerSize();
     $container.appendChild($innerContainer);
-    this._lastUpdateTime = performance.now();
     this._scheduleRender();
   }
 
@@ -438,6 +450,30 @@ var Marquee = exports.Marquee = function () {
             });
           });
         });
+      }
+    }
+
+    // update size of container so that the marquee items fit inside it.
+    // This is needed because the items are posisitioned absolutely, so not in normal flow.
+    // Without this, the height of the container would always be 0px, which is not useful
+
+  }, {
+    key: '_updateContainerSize',
+    value: function _updateContainerSize() {
+      var maxSize = this._items.reduce(function (size, item) {
+        var a = item.getSize({ inverse: true });
+        if (a > size) {
+          return a;
+        }
+        return size;
+      }, 0);
+      if (this._containerSize !== maxSize) {
+        this._containerSize = maxSize;
+        if (this._direction === _direction.DIRECTION.RIGHT) {
+          this._$container.style.height = maxSize + 'px';
+        } else {
+          this._$container.style.width = maxSize + 'px';
+        }
       }
     }
   }, {
@@ -544,6 +580,7 @@ var Marquee = exports.Marquee = function () {
       offsets.forEach(function (offset, i) {
         return _this4._items[i].setOffset(offset);
       });
+      this._updateContainerSize();
 
       if (!this._items.length) {
         (0, _helpers.defer)(function () {
